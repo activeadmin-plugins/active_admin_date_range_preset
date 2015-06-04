@@ -1,0 +1,75 @@
+form.filter_form {
+
+  .filter_form_field.filter_date_time_range input.date-time-picker {
+    width: 102px;
+    padding: 8px 3px 7px;
+  }
+
+  .filter_form_field.filter_date_time_range,
+  .filter_form_field.filter_date_range {
+
+    div.label_div {
+
+      label {
+        display: inline-block;
+      }
+
+      .btn_timerange {
+        float: right;
+        margin: -2px 8px 0 0;
+        text-decoration: none;
+        border-bottom: 1px dashed;
+        line-height: 1.4em;
+        &:hover {
+          border-bottom: 0 none;
+        }
+      }
+
+    } // div.label_div
+
+  }
+}
+
+
+body.new, body.edit {
+  .date-time-picker {
+    width: 218px;
+  }
+}
+
+.date_time_picker {
+
+  .btn_timerange {
+    text-decoration: none;
+    border-bottom: 1px dashed;
+    &:hover {
+      border-bottom: 0 none;
+    }
+  }
+
+}
+
+.block_timerange {
+  position: absolute;
+  display: block;
+  border: 1px solid #000;
+  padding: 5px 10px 5px 10px;
+  text-align: center;
+  background-color: #f4f4f4;
+  >div {
+    margin-top: 10px;
+    &:last-child {
+      margin-bottom: 10px;
+    }
+    span {
+      color: #2e86cc;
+      cursor: pointer;
+      text-decoration: none;
+
+      border-bottom: 1px dashed;
+      &:hover {
+        border-bottom: 0 none;
+      }
+    }
+  }
+}
