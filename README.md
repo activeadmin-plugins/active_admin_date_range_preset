@@ -5,7 +5,7 @@ This is JS-CSS add-on over inputs filter_date_range in sidebar filters
 
 Use it as example and modify for your needs.
 
-This is how it is looks like
+This is how it looks like
 
 ![Step 1](/step_1.jpg)
 
