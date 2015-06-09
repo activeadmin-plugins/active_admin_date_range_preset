@@ -43,7 +43,7 @@
     return this.each (i, el) ->
       $this = $(el)
 
-      if $this.data('show-time').toString() == 'true'
+      if typeof $this.data('show-time') != 'undefined' && $this.data('show-time').toString() == 'true'
         console.log $this.data('show-time')
         opts.show_time = true
 
