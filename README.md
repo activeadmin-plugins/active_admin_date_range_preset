@@ -44,13 +44,13 @@ f.input :date_to, as: :date_time_picker
 ```
 
 Input can be "as :string" or any other type compatible with "input type=text"
-Main point is to set for ferst input-pair wrapper-class
+Main point is to set for first input-pair wrapper-class
 
 ```wrapper_html: { class: 'datetime_preset_pair' }```
 
 input name('date_from' and 'date_to') can be named whatever your need
 
-By default inputs fills with only date("2015-06-12"). If you need time add
+By default inputs are filled with date("yyyy-mm-dd"). If you need time add
 
 ```data: { show_time: 'true' }```
 
@@ -63,7 +63,7 @@ You can set global defaults in your active_admin.js like this:
 # Today false: 2015-06-12 - 2015-06-13
 $.fn.date_range_ext_preset.defaults.date_to_human_readable = true
 
-# Displa time
+# Display time
 # Today: 2015-06-12 00:00:00 - 2015-06-13 00:00:00
 # Today with human_readable=true: 2015-06-12 00:00:00 - 2015-16-12 23:59:59
 $.fn.date_range_ext_preset.defaults.show_time = true
