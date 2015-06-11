@@ -1,5 +1,5 @@
 require "activeadmin"
-require "active_admin_datetimepicker/version"
+require "active_admin_date_range_preset/version"
 
 module ActiveAdminDateRangePreset
     module Rails
