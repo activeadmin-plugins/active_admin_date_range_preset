@@ -1,38 +1,12 @@
-form.filter_form {
-
-  .filter_form_field.filter_date_time_range,
-  .filter_form_field.filter_date_range {
-
-    .datetime_preset_filter_label {
-
-      .btn_timerange {
-        float: right;
-        margin: -2px 8px 0 0;
-        text-decoration: none;
-        border-bottom: 1px dashed;
-        line-height: 1.4em;
-        &:hover {
-          border-bottom: 0 none;
-        }
-      }
-
-    } // div.label_div
-
+form label.datetime_preset_filter_label .btn_timerange {
+  float: right;
+  margin: -2px 8px 0 0;
+  text-decoration: none;
+  border-bottom: 1px dashed;
+  line-height: 1.4em;
+  &:hover {
+    border-bottom: 0 none;
   }
-
-}
-
-
-.date_time_picker {
-
-  .btn_timerange {
-    text-decoration: none;
-    border-bottom: 1px dashed;
-    &:hover {
-      border-bottom: 0 none;
-    }
-  }
-
 }
 
 .block_timerange {
@@ -59,3 +33,4 @@ form.filter_form {
     }
   }
 }
+

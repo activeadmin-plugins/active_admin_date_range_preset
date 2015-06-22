@@ -167,23 +167,3 @@ $.fn.date_range_ext_preset.defaults.hours_offset = +3
 // or
 $.fn.date_range_ext_preset.defaults.hours_offset = -3
 ``` 
-
-### inject_method
-
-value: 'wrap' or 'append'
-
-This is how button "Set rage" will be added to DOM-tree. Play with it to choose best place.
-
-
-
-
-
-
-
-
-
-
-
-
-
-

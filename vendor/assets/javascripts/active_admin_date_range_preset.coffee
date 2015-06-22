@@ -1,6 +1,5 @@
 (($) ->
   # options:
-  #  inject_method: 'append' | 'append' how to insert new HTML into document
   #  gteq_input: jQuery-selecotr for input date_from
   #  lteq_input: jQuery-selecotr for input date_to
   #  hours_offset: Int number - hours +/- to correct time
@@ -17,8 +16,9 @@
       return s
 
     # formated date YYYY-MM-DD, with converting to UTC
+    # note: getMonth Returns the month (from 0-11), so we do +1
     formatDate = (date)->
-      str = date.getFullYear() + '-' + num_with_leading_zero(date.getMonth()) + '-' + num_with_leading_zero(date.getDate())
+      str = date.getFullYear() + '-' + num_with_leading_zero(date.getMonth()+1) + '-' + num_with_leading_zero(date.getDate())
       if opts.show_time
         str += ( ' ' + num_with_leading_zero(date.getHours()) + ':' + num_with_leading_zero(date.getMinutes()) + ':' + num_with_leading_zero(date.getSeconds()) )
       return str
@@ -60,10 +60,7 @@
 
       # filter modifying
       main_btn_html = '<a href="#" class="btn_timerange">Set range</a>'
-      if opts.inject_method == 'append'
-        $this.append(main_btn_html)
-      else
-        $this.find('label').addClass('datetime_preset_filter_label').append(main_btn_html)
+      $this.find('label').addClass('datetime_preset_filter_label').append(main_btn_html)
 
       # helper
       fillInputs = (start, end)->
@@ -145,7 +142,6 @@
       )
 
   $.fn.date_range_ext_preset.defaults = {
-    inject_method: 'wrap',
     # Manual global time shift, from UTC can be +/- number
     hours_offset: 0,
     # date_to_human_readable = true, then "date_to" consider as including full day without last second
@@ -170,4 +166,5 @@ $(document).on 'ready', ->
   # Init in sidebar filters
   $('.filter_form .filter_date_range').date_range_ext_preset()
   # Init in forms
-  $('.datetime_preset_pair').date_range_ext_preset({inject_method: 'append'})
+  $('.datetime_preset_pair').date_range_ext_preset()
+
