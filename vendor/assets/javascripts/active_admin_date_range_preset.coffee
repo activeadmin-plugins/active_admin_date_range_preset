@@ -73,6 +73,11 @@
         unbindClickEventBlockTimerange()
         e.stopPropagation()
         e.preventDefault()
+
+        additional_items_html = ''
+        opts.add_range.forEach (el, i)->
+          additional_items_html += '<div><span class="btn_date_rage_' + i + '">' + el['title'] + '</span></div>'
+
         $('body').append('<div style="min-width: '+e.target.offsetWidth+'px; top: '+(e.target.offsetTop)+'px; left: '+(e.target.offsetLeft)+'px" class="block_timerange">' +
             '<div><span class="btn_today">Today</span></div>' +
             '<div><span class="btn_yesterday">Yesterday</span></div>' +
@@ -80,9 +85,19 @@
             '<div><span class="btn_month">This Month</span></div>' +
             '<div><span class="btn_last_week">Last Week</span></div>' +
             '<div><span class="btn_last_month">Last Month</span></div>' +
+            additional_items_html +
             '</div>'
         ).ready(->
           container = $(this).find('.block_timerange')
+
+          # additional rages
+          opts.add_range.forEach (el, i)->
+            $(container).on('click.CalendarRangeSet', '.btn_date_rage_' + i, (e)->
+              unbindClickEventBlockTimerange()
+              start = new Date(el['start'].getFullYear(), el['start'].getMonth(), el['start'].getDate())
+              end = new Date(el['end'].getFullYear(), el['end'].getMonth(), el['end'].getDate())
+              fillInputs(start, end)
+            )
 
           # Today
           $(container).on('click.CalendarRangeSet', '.btn_today', (e)->
@@ -144,6 +159,7 @@
   $.fn.date_range_ext_preset.defaults = {
     # Manual global time shift, from UTC can be +/- number
     hours_offset: 0,
+
     # date_to_human_readable = true, then "date_to" consider as including full day without last second
     #  For example Today will be:
     #   true
@@ -153,18 +169,23 @@
     #     2015-06-10 - 2015-06-11
     #     2015-06-10 00:00:00 - 2015-06-11 00:00:00
     date_to_human_readable: false,
+
     # Display time or not: 2015-06-10 vs 2015-06-10 00:00:00
-    show_time: false
+    show_time: false,
+
+    # Array of addition ranges
+    # example:
+    # {
+    #   title: 'Last 30 days',
+    #   start: new Date().setDate((new Date()).getDate() - 30)
+    #   end: new Date()
+    # }
+    add_range: []
   };
 
 ) jQuery
 
 
-
-
 $(document).on 'ready', ->
-  # Init in sidebar filters
-  $('.filter_form .filter_date_range').date_range_ext_preset()
   # Init in forms
   $('.datetime_preset_pair').date_range_ext_preset()
-
