@@ -167,3 +167,23 @@ $.fn.date_range_ext_preset.defaults.hours_offset = +3
 // or
 $.fn.date_range_ext_preset.defaults.hours_offset = -3
 ``` 
+
+### Addition ranges
+
+```javascript
+$(document).on('ready', function(){
+
+    $('.filter_form .filter_date_range').date_range_ext_preset({
+        date_to_human_readable: true, # affects last day
+        add_range: [
+            {
+                title: 'Last 30 days',
+                // date_to_human_readable affects end-date, sow must do this:
+                start: new Date(new Date().setDate(new Date().getDate() - 29)),
+                end: new Date(new Date().setDate(new Date().getDate() + 1))
+            }
+        ]
+    });
+
+});
+```
