@@ -80,7 +80,7 @@ $(document).on('ready', function(){
 });
 ```
 
-Now all you "date_time_range" inputs has button "Set rage"
+Now all you "date_time_range" inputs has button "Set range"
 
 
 ## Custom usage
@@ -96,7 +96,7 @@ $(document).on('ready', function(){
   });
 });
 ```
-".any_jquery_selector" is pointed to place where button "Set rage" will appear.
+".any_jquery_selector" is pointed to place where button "Set range" will appear.
 Set lteq_input and gteq_input to point to inputs if they not near main selector.
 
 
