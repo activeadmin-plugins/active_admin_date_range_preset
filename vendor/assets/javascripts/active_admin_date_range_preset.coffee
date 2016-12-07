@@ -52,11 +52,11 @@
       if options.lteq_input
         lteq_input = $(options.lteq_input)
       else
-        lteq_input = if $this.hasClass('datetime_preset_pair') then $this.next().find('input') else $this.find('input[id$=_lteq]')
+        lteq_input = if $this.hasClass('datetime_preset_pair') then $this.next().find('input') else $this.find('input:last')
       if options.gteq_input
         gteq_input = $(options.gteq_input)
       else
-        gteq_input = if $this.hasClass('datetime_preset_pair') then $this.find('input') else $this.find('input[id$=_gteq]')
+        gteq_input = if $this.hasClass('datetime_preset_pair') then $this.find('input') else $this.find('input:first')
 
       # filter modifying
       main_btn_html = '<a href="#" class="btn_timerange">Set range</a>'
@@ -76,7 +76,7 @@
 
         additional_items_html = ''
         opts.add_range.forEach (el, i)->
-          additional_items_html += '<div><span class="btn_date_rage_' + i + '">' + el['title'] + '</span></div>'
+          additional_items_html += '<div><span class="btn_date_range_' + i + '">' + el['title'] + '</span></div>'
 
         $('body').append('<div style="min-width: '+e.target.offsetWidth+'px; top: '+(e.target.offsetTop)+'px; left: '+(e.target.offsetLeft)+'px" class="block_timerange">' +
             '<div><span class="btn_today">Today</span></div>' +
@@ -90,9 +90,9 @@
         ).ready(->
           container = $(this).find('.block_timerange')
 
-          # additional rages
+          # additional ranges
           opts.add_range.forEach (el, i)->
-            $(container).on('click.CalendarRangeSet', '.btn_date_rage_' + i, (e)->
+            $(container).on('click.CalendarRangeSet', '.btn_date_range_' + i, (e)->
               unbindClickEventBlockTimerange()
               start = new Date(el['start'].getFullYear(), el['start'].getMonth(), el['start'].getDate())
               end = new Date(el['end'].getFullYear(), el['end'].getMonth(), el['end'].getDate())
