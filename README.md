@@ -17,7 +17,7 @@ This is how it looks like
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'active_admin_date_range_preset', github: 'workgena/active_admin_date_range_preset'
+gem 'active_admin_date_range_preset'
 ```
 
 And then execute:
