@@ -1,3 +1,7 @@
+[![Gem Version](https://badge.fury.io/rb/active_admin_date_range_preset.svg)](https://badge.fury.io/rb/active_admin_date_range_preset)
+[![NPM Version](https://badge.fury.io/js/@activeadmin-plugins%2Factive_admin_date_range_preset.svg)](https://badge.fury.io/js/@activeadmin-plugins%2Factive_admin_date_range_preset)
+![npm](https://img.shields.io/npm/dm/@activeadmin-plugins/active_admin_date_range_preset)
+
 # active_admin_date_range_preset
 
 Preset links for ActiveAdmin date_range inputs in sidebar filters in forms
@@ -28,13 +32,46 @@ Or install it yourself as:
 
     $ gem install active_admin_date_range_preset
 
-Include assests:
+##### Using assets via Sprockets
 
  JS asset
  ```//= require active_admin_date_range_preset```
 
  CSS
  ```@import "active_admin_date_range_preset";```
+
+##### Using assets via Webpacker (or any other assets bundler) as a NPM module (Yarn package)
+
+Execute:
+
+    $ npm i @activeadmin-plugins/active_admin_date_range_preset
+
+Or
+
+    $ yarn add @activeadmin-plugins/active_admin_date_range_preset
+
+Or add manually to `package.json`:
+
+```json
+"dependencies": {
+  "@activeadmin-plugins/active_admin_date_range_preset": "0.3.1"
+}
+```
+and execute:
+
+    $ yarn
+
+Add the following line into `app/assets/javascripts/active_admin.js`:
+
+```javascript
+import '@activeadmin-plugins/active_admin_date_range_preset';
+```
+
+Add the following line into `app/assets/stylesheets/active_admin.scss`:
+
+```css
+@import '@activeadmin-plugins/active_admin_date_range_preset';
+```
 
 Your sidebar filters should now have link "Set Range"
 
@@ -166,7 +203,7 @@ Example:
 $.fn.date_range_ext_preset.defaults.hours_offset = +3
 // or
 $.fn.date_range_ext_preset.defaults.hours_offset = -3
-``` 
+```
 
 ### Addition ranges
 

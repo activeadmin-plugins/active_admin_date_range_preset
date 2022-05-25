@@ -1,0 +1,32 @@
+{
+  "name": "@activeadmin-plugins/active_admin_date_range_preset",
+  "version": "0.3.1",
+  "description": "Integrate useful fast links to set date ranges in to ActiveAdmin, for example today range, week range, month range",
+  "main": "src/active_admin_date_range_preset.js",
+  "style": "src/active_admin_date_range_preset.scss",
+  "repository": "git@github.com:activeadmin-plugins/active_admin_date_range_preset.git",
+  "author": "Gena M. <workgena@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/activeadmin-plugins/active_admin_date_range_preset.git"
+  },
+  "bugs": {
+    "url": "https://github.com/activeadmin-plugins/active_admin_date_range_preset/issues"
+  },
+  "homepage": "https://github.com/activeadmin-plugins/active_admin_date_range_preset#readme",
+  "keywords": [
+    "active",
+    "admin",
+    "date",
+    "range",
+    "preset"
+  ],
+  "files": [
+    "src/**/*"
+  ],
+  "scripts": {
+    "prepublishOnly": "rm -rf src && cp -R vendor/assets/javascripts/ src && cp -R vendor/assets/stylesheets/ src"
+  }
+}
