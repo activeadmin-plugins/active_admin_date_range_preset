@@ -92,4 +92,22 @@ describe 'date range preset', type: :feature, js: true do
       expect(page).to have_no_content('old')
     end
   end
+
+  context 'datetime_preset_pair auto-init in a form' do
+    before { visit '/admin/posts/new' }
+
+    let(:pair) { page.find('.datetime_preset_pair') }
+
+    it 'adds a "Set range" link to the first input of the pair' do
+      expect(pair).to have_css('a.btn_timerange', text: /set range/i)
+    end
+
+    it 'fills the pair with today including time' do
+      pair.find('a.btn_timerange').click
+      page.find('.block_timerange .btn_today').click
+
+      expect(pair.find('input[type="text"]').value)
+        .to eq(today.strftime('%Y-%m-%d 00:00:00'))
+    end
+  end
 end

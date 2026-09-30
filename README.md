@@ -130,7 +130,7 @@ In active_admin.js
 Add following lines to JavaScript
 
 ```javascript
-$(document).on('ready', function(){
+$(function () {
     $('form.filter_form div.filter_date_time_range').date_range_ext_preset();
 });
 ```
@@ -144,7 +144,7 @@ You can assign "Set range" almost to any input-text-pair filters/forms.
 For example, you have complex form where input-pairs are not close to each other and not standard.
 
 ```javascript
-$(document).on('ready', function(){
+$(function () {
   $('.any_jquery_selector').date_range_ext_preset({
     lteq_input: '.jquery_selector_to_first_input',
     gteq_input: '.jquery_selector_to_second_input'
@@ -166,7 +166,7 @@ $('.any_jquery_selector').date_range_ext_preset({
  setting_name: "setting_value"
 });
 ```
-Example how to set global settings. Write it before $(document).on('ready')
+Example how to set global settings. Write it before the `$(function () { ... })` block
 
 ```javascript
 $.fn.date_range_ext_preset.defaults.setting_name = "setting_value"
@@ -226,7 +226,7 @@ $.fn.date_range_ext_preset.defaults.hours_offset = -3
 ### Addition ranges
 
 ```javascript
-$(document).on('ready', function(){
+$(function () {
 
     $('.filter_form .filter_date_range').date_range_ext_preset({
         date_to_human_readable: true, # affects last day
