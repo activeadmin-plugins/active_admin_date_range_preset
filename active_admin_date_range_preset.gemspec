@@ -14,7 +14,11 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/workgena/active_admin_date_range_preset"
   spec.license       = "MIT"
 
-  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+  # `screen/` is README images — 91 KB, 98% of the published gem, for
+  # pictures that render from GitHub and are never read from the
+  # package. `.idea/` is a JetBrains project file. `vendor/` stays:
+  # that is the shipped JS.
+  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features|screen|\.idea)/}) }
   spec.bindir        = "bin"
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
