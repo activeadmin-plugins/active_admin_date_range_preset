@@ -14,11 +14,12 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/workgena/active_admin_date_range_preset"
   spec.license       = "MIT"
 
-  # `screen/` is README images — 91 KB, 98% of the published gem, for
-  # pictures that render from GitHub and are never read from the
-  # package. `.idea/` is a JetBrains project file. `vendor/` stays:
-  # that is the shipped JS.
-  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features|screen|\.idea)/}) }
+  # Whitelist, not a reject list: a new directory in the repo does not
+  # reach consumers until it is named here. The reject form needs a new
+  # pattern every time the repo grows one, and that is how 91 KB of README images under screen/
+  # ended up published in the first place.
+  # `vendor/` is the shipped JS.
+  spec.files         = Dir["lib/**/*", "vendor/**/*", "README.md", "LICENSE.txt"]
   spec.bindir        = "bin"
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
