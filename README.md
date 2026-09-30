@@ -75,6 +75,24 @@ Add the following line into `app/assets/stylesheets/active_admin.scss`:
 
 Your sidebar filters should now have link "Set Range"
 
+## Development
+
+The specs run against a throwaway Rails app built by `spec/support/rails_template.rb`.
+It is generated automatically on the first run (or via `bundle exec rake setup`) into
+`spec/rails/rails-<version>/`, which is gitignored.
+
+```sh
+bundle install
+bundle exec rspec spec
+```
+
+Pick the versions under test with env vars:
+
+```sh
+RAILS=8.0.0 AA=3.5.0 bundle install
+RAILS=8.0.0 AA=3.5.0 bundle exec rspec spec
+```
+
 ## Usage
 
 in New/Edit formtastic forms:

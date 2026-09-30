@@ -1,0 +1,10 @@
+/.bundle/
+/Gemfile.lock
+/coverage/
+/pkg/
+/tmp/
+/.idea
+.DS_Store
+/spec/rails
+vendor/bundle
+node_modules
