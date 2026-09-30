@@ -1,6 +1,7 @@
 [![Gem Version](https://badge.fury.io/rb/active_admin_date_range_preset.svg)](https://badge.fury.io/rb/active_admin_date_range_preset)
 [![NPM Version](https://badge.fury.io/js/@activeadmin-plugins%2Factive_admin_date_range_preset.svg)](https://badge.fury.io/js/@activeadmin-plugins%2Factive_admin_date_range_preset)
 ![npm](https://img.shields.io/npm/dm/@activeadmin-plugins/active_admin_date_range_preset)
+[![CI](https://github.com/activeadmin-plugins/active_admin_date_range_preset/actions/workflows/ci.yml/badge.svg)](https://github.com/activeadmin-plugins/active_admin_date_range_preset/actions/workflows/ci.yml)
 
 # active_admin_date_range_preset
 
