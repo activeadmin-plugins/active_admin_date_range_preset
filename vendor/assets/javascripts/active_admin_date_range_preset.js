@@ -60,8 +60,11 @@ $(function () {
       // click time rather than here, so the leak was not even order-dependent.
       let el_opts = $.extend({}, opts);
 
-      if (typeof $this.data('show-time') != 'undefined' && $this.data('show-time').toString() == 'true') {
-        el_opts.show_time = true;
+      // The attribute is authoritative in both directions when present. Only
+      // ever assigning true made it impossible for one element to opt out of
+      // a show_time the call or the defaults had turned on.
+      if (typeof $this.data('show-time') != 'undefined') {
+        el_opts.show_time = $this.data('show-time').toString() == 'true';
       }
 
       // detect inputs
