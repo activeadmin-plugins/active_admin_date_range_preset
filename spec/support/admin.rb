@@ -37,6 +37,10 @@ def add_post_resource_with_two_pairs
         f.input :created_at, as: :string,
                 wrapper_html: { class: 'datetime_preset_pair', data: { show_time: 'true' } }
         f.input :updated_at, as: :string
+        # Not .datetime_preset_pair, so the auto-init leaves it alone and the
+        # spec can drive it with explicit options.
+        f.input :title, as: :string,
+                wrapper_html: { class: 'manual_preset_pair', data: { show_time: 'false' } }
       end
       f.actions
     end
