@@ -35,6 +35,7 @@ require 'capybara/rails'
 require 'capybara/rspec'
 require 'support/admin'
 require 'support/capybara'
+require 'support/browser_time'
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = false
