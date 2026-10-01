@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in active_admin_date_range_preset.gemspec
 gemspec
 
-default_rails_version = '7.1.0'
+default_rails_version = '8.0.0'
 default_activeadmin_version = '3.5.0'
 
 gem 'rails', "~> #{ENV['RAILS'] || default_rails_version}"
