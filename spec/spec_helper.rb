@@ -12,11 +12,19 @@ Bundler.setup
 
 ENV['RAILS_ENV'] = 'test'
 require 'rails'
-ENV['RAILS'] = Rails.version
-ENV['RAILS_ROOT'] = File.expand_path("../rails/rails-#{ENV['RAILS']}", __FILE__)
+require 'fileutils'
+require_relative 'support/test_app_paths'
+ENV['RAILS_ROOT'] = TestAppPaths.app_root
 
-# Create the test app if it doesn't exist
-system 'rake setup' unless File.exist?(ENV['RAILS_ROOT'])
+# Create the test app if it doesn't exist. rails new creates the target
+# directory before the template runs, so a template that fails halfway leaves
+# the directory behind and every later run would skip regeneration and die on
+# config/environment.rb instead of reporting the real error. Check the file the
+# suite actually loads, and refuse to continue if the build did not succeed.
+unless File.exist?(File.join(ENV['RAILS_ROOT'], 'config', 'environment.rb'))
+  FileUtils.rm_rf(ENV['RAILS_ROOT'])
+  abort 'rake setup failed; dummy app not built' unless system('rake setup')
+end
 
 require 'active_model'
 # require ActiveRecord to ensure that Ransack loads correctly

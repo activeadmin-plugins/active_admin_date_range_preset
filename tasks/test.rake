@@ -1,6 +1,7 @@
+require_relative '../spec/support/test_app_paths'
+
 desc 'Creates a test rails app for the specs to run against'
 task :setup do
-  require 'rails/version'
 
   # Rails 8.1 wires importmap-rails into the generated ApplicationController
   # (stale_when_importmap_changes). This app runs on Sprockets, so that gem is
@@ -17,5 +18,8 @@ task :setup do
     spec/support/rails_template.rb
   ].join(' ')
 
-  system "bundle exec rails new spec/rails/rails-#{Rails::VERSION::STRING} #{rails_new_args}"
+  puts "[setup] Rails #{Rails::VERSION::STRING} / Active Admin #{ENV['AA'] || '(Gemfile default)'}"
+
+  abort 'rails new failed' unless
+    system("bundle exec rails new spec/rails/#{TestAppPaths.app_dir_name} #{rails_new_args}")
 end
