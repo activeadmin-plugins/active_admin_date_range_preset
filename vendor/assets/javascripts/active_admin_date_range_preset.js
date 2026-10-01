@@ -54,6 +54,21 @@ $(function () {
     return this.each(function(i, el) {
       let $this = $(el);
 
+      // Re-initialising an element replaces its wiring instead of adding to
+      // it. The auto-init below was dead from jQuery 3 onwards, so hosts
+      // worked around it by calling the plugin themselves; now that it works
+      // again both run, and without this the label grows a second "Set range"
+      // whose handler tears down the first one's popup.
+      //
+      // Replacing rather than skipping matters: the auto-init registers its
+      // ready callback before anything a host adds to active_admin.js, so
+      // bailing out on the second call would silently drop the host's
+      // options. Reading the link itself rather than a data flag keeps the
+      // guard and the thing it guards from drifting apart across clone() and
+      // Turbo cache restores, which copy the node but not jQuery's data.
+      $this.find('a.btn_timerange').remove();
+      $this.off('click.dateRangeExtPreset');
+
       // Per element, because data-show-time is read off the element itself.
       // Writing it back into the shared opts let one pair's setting reach
       // every other pair in the same call, and formatDate reads the flag at
@@ -93,7 +108,7 @@ $(function () {
         lteq_input.val(formatDate(end, el_opts));
       }
 
-      $this.on('click', '.btn_timerange', function(e) {
+      $this.on('click.dateRangeExtPreset', '.btn_timerange', function(e) {
         unbindClickEventBlockTimerange();
         e.stopPropagation();
         e.preventDefault();
