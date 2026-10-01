@@ -32,9 +32,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activeadmin", "~> 3.2"
 
   # Active Admin 3.2 itself still allows railties >= 6.1 and Ruby >= 2.6,
-  # both of which reached end of life years ago and neither of which is
-  # tested here. Without these the gem would inherit that claim by silence.
-  spec.add_dependency "railties", ">= 7.1"
+  # both of which reached end of life years ago. Declare what CI covers, so
+  # the gem does not inherit that claim by silence. Every Rails 7.x series is
+  # out of support: 7.1 since October 2025, 7.2 since August 2026.
+  spec.add_dependency "railties", ">= 8.0"
   spec.required_ruby_version = ">= 3.3"
 
   spec.add_development_dependency "rake"
