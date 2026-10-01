@@ -27,6 +27,13 @@ $(function () {
       return str;
     }
 
+    // Days from the Monday that opens this date's week. getDay() counts from
+    // Sunday, so a plain `- getDay() + 1` lands on tomorrow for Sundays and
+    // hands back the week that has not started yet.
+    function days_since_monday(date) {
+      return (date.getDay() + 6) % 7;
+    }
+
     function unbindClickEventBlockTimerange() {
       $('.block_timerange').remove();
       $('body').off('click.CalendarRangeSet');
@@ -131,7 +138,7 @@ $(function () {
           // Week
           $(container).on('click.CalendarRangeSet', '.btn_week', function(e) {
             unbindClickEventBlockTimerange();
-            let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - datetime.getDay() + 1);
+            let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - days_since_monday(datetime));
             let end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 7);
             fillInputs(start, end);
           });
@@ -147,7 +154,7 @@ $(function () {
           // Last Week
           $(container).on('click.CalendarRangeSet', '.btn_last_week', function(e) {
             unbindClickEventBlockTimerange();
-            let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - datetime.getDay() + 1);
+            let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - days_since_monday(datetime));
             let start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 7);
             fillInputs(start, end);
           });
