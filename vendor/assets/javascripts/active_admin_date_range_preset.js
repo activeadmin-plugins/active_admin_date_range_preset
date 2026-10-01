@@ -161,8 +161,12 @@ $(function () {
           });
 
           // Outer
+          // No stopPropagation here: this listener only watches for a click
+          // that should close the popup. Active Admin delegates Clear Filters
+          // and the has_many buttons from <document>, which is upstream of
+          // <body>, so swallowing the event would break them for as long as
+          // the popup is open.
           $('body').on('click.CalendarRangeSet', function(e) {
-            e.stopPropagation();
             if ($(e.target).closest('.block_timerange').length == 0) {
               unbindClickEventBlockTimerange();
             }
