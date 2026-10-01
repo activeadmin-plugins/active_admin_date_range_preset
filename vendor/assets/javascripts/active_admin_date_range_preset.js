@@ -19,9 +19,9 @@ $(function () {
 
     // formated date YYYY-MM-DD, with converting to UTC
     // note: getMonth Returns the month (from 0-11), so we do +1
-    function formatDate(date) {
+    function formatDate(date, el_opts) {
       let str = date.getFullYear() + '-' + num_with_leading_zero(date.getMonth()+1) + '-' + num_with_leading_zero(date.getDate());
-      if (opts.show_time) {
+      if (el_opts.show_time) {
         str += (' ' + num_with_leading_zero(date.getHours()) + ':' + num_with_leading_zero(date.getMinutes()) + ':' + num_with_leading_zero(date.getSeconds()));
       }
       return str;
@@ -54,8 +54,14 @@ $(function () {
     return this.each(function(i, el) {
       let $this = $(el);
 
+      // Per element, because data-show-time is read off the element itself.
+      // Writing it back into the shared opts let one pair's setting reach
+      // every other pair in the same call, and formatDate reads the flag at
+      // click time rather than here, so the leak was not even order-dependent.
+      let el_opts = $.extend({}, opts);
+
       if (typeof $this.data('show-time') != 'undefined' && $this.data('show-time').toString() == 'true') {
-        opts.show_time = true;
+        el_opts.show_time = true;
       }
 
       // detect inputs
@@ -79,12 +85,12 @@ $(function () {
 
       // helper
       function fillInputs(start, end) {
-        gteq_input.val(formatDate(start));
-        if (opts.date_to_human_readable) {
+        gteq_input.val(formatDate(start, el_opts));
+        if (el_opts.date_to_human_readable) {
           end.setTime(end.getTime() - 1000);
         }
 
-        lteq_input.val(formatDate(end));
+        lteq_input.val(formatDate(end, el_opts));
       }
 
       $this.on('click', '.btn_timerange', function(e) {
