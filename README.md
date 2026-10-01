@@ -19,9 +19,11 @@ This is how it looks like
 
 ## Compatibility
 
-Active Admin 3.2 or newer, in the 3.x series. Rails 7.1 or newer, Ruby 3.2 or
-newer. CI covers Active Admin 3.2 and 3.5 against the Rails versions in the
-matrix.
+Active Admin 3.2 or newer, in the 3.x series. Rails 7.1 or newer, Ruby 3.3 or
+newer. CI covers Active Admin 3.2 and 3.5 on Ruby 3.3, 3.4 and 4.0 against
+Rails 8.0 and 8.1 — the Rails releases still supported upstream. The declared
+`railties >= 7.1` floor is left as it is: dropping a version from CI is not
+evidence the gem broke there.
 
 The Rails and Ruby floors are declared explicitly because Active Admin 3.2
 still allows `railties >= 6.1` and Ruby `>= 2.6`, both long past end of life

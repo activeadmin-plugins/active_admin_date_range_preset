@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   # both of which reached end of life years ago and neither of which is
   # tested here. Without these the gem would inherit that claim by silence.
   spec.add_dependency "railties", ">= 7.1"
-  spec.required_ruby_version = ">= 3.2"
+  spec.required_ruby_version = ">= 3.3"
 
   spec.add_development_dependency "rake"
 end
