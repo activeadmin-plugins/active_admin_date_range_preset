@@ -27,4 +27,16 @@ describe 'two preset pairs on one form', type: :feature, js: true do
 
     expect(value_of('post_created_at_input')).to eq(today.strftime('%Y-%m-%d 00:00:00'))
   end
+
+  # show_time passed to the call is the documented way to turn time on for a
+  # group of inputs. data-show-time="false" is then the only way for one of
+  # them to opt out, and the attribute was write-only: the guard assigned
+  # true and never false.
+  it 'lets data-show-time="false" opt back out of a call that asked for time' do
+    page.execute_script("$('.manual_preset_pair').date_range_ext_preset({ show_time: true });")
+
+    pick_today_in('post_title_input')
+
+    expect(value_of('post_title_input')).to eq((today + 1).strftime('%Y-%m-%d'))
+  end
 end
