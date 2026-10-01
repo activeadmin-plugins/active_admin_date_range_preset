@@ -9,6 +9,20 @@ form label.datetime_preset_filter_label .btn_timerange {
   }
 }
 
+// A form pair gets Active Admin's full label column, which is wide enough
+// that the float above parks the link at the far right of it, away from the
+// inputs it drives. Put it on its own line under the label text instead.
+// `display: table` keeps it shrink-to-fit, so the dashed underline stays
+// under the words rather than stretching the whole column.
+//
+// The sidebar filter keeps the float: there the label and the link share a
+// narrow panel and right alignment is what the plugin has always shown.
+.datetime_preset_pair > label.datetime_preset_filter_label .btn_timerange {
+  float: none;
+  display: table;
+  margin: 2px 0 0 0;
+}
+
 .block_timerange {
   position: absolute;
   display: block;
