@@ -200,7 +200,8 @@ $(function () {
   }
 });
 
-$(document).on('ready', function() {
+// jQuery 3 removed $(document).on('ready'), so this must stay $(fn).
+$(function() {
   // Init in forms
   $('.datetime_preset_pair').date_range_ext_preset();
 });

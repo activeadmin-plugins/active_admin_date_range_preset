@@ -1,6 +1,7 @@
 [![Gem Version](https://badge.fury.io/rb/active_admin_date_range_preset.svg)](https://badge.fury.io/rb/active_admin_date_range_preset)
 [![NPM Version](https://badge.fury.io/js/@activeadmin-plugins%2Factive_admin_date_range_preset.svg)](https://badge.fury.io/js/@activeadmin-plugins%2Factive_admin_date_range_preset)
 ![npm](https://img.shields.io/npm/dm/@activeadmin-plugins/active_admin_date_range_preset)
+[![CI](https://github.com/activeadmin-plugins/active_admin_date_range_preset/actions/workflows/ci.yml/badge.svg)](https://github.com/activeadmin-plugins/active_admin_date_range_preset/actions/workflows/ci.yml)
 
 # active_admin_date_range_preset
 
@@ -75,6 +76,24 @@ Add the following line into `app/assets/stylesheets/active_admin.scss`:
 
 Your sidebar filters should now have link "Set Range"
 
+## Development
+
+The specs run against a throwaway Rails app built by `spec/support/rails_template.rb`.
+It is generated automatically on the first run (or via `bundle exec rake setup`) into
+`spec/rails/rails-<version>/`, which is gitignored.
+
+```sh
+bundle install
+bundle exec rspec spec
+```
+
+Pick the versions under test with env vars:
+
+```sh
+RAILS=8.0.0 AA=3.5.0 bundle install
+RAILS=8.0.0 AA=3.5.0 bundle exec rspec spec
+```
+
 ## Usage
 
 in New/Edit formtastic forms:
@@ -112,7 +131,7 @@ In active_admin.js
 Add following lines to JavaScript
 
 ```javascript
-$(document).on('ready', function(){
+$(function () {
     $('form.filter_form div.filter_date_time_range').date_range_ext_preset();
 });
 ```
@@ -126,7 +145,7 @@ You can assign "Set range" almost to any input-text-pair filters/forms.
 For example, you have complex form where input-pairs are not close to each other and not standard.
 
 ```javascript
-$(document).on('ready', function(){
+$(function () {
   $('.any_jquery_selector').date_range_ext_preset({
     lteq_input: '.jquery_selector_to_first_input',
     gteq_input: '.jquery_selector_to_second_input'
@@ -148,7 +167,7 @@ $('.any_jquery_selector').date_range_ext_preset({
  setting_name: "setting_value"
 });
 ```
-Example how to set global settings. Write it before $(document).on('ready')
+Example how to set global settings. Write it before the `$(function () { ... })` block
 
 ```javascript
 $.fn.date_range_ext_preset.defaults.setting_name = "setting_value"
@@ -208,7 +227,7 @@ $.fn.date_range_ext_preset.defaults.hours_offset = -3
 ### Addition ranges
 
 ```javascript
-$(document).on('ready', function(){
+$(function () {
 
     $('.filter_form .filter_date_range').date_range_ext_preset({
         date_to_human_readable: true, # affects last day
