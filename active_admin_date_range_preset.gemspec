@@ -16,8 +16,8 @@ Gem::Specification.new do |spec|
 
   # Whitelist, not a reject list: a new directory in the repo does not
   # reach consumers until it is named here. The reject form needs a new
-  # pattern every time the repo grows one, and that is how 91 KB of README images under screen/
-  # ended up published in the first place.
+  # pattern every time the repo grows one, which is how 91 KB of README
+  # screenshots ended up inside the published gem before this changed.
   # `vendor/` is the shipped JS.
   spec.files         = `git ls-files -z -- lib app vendor config exe bin README.md LICENSE.txt`.split("\x0")
   spec.bindir        = "bin"
