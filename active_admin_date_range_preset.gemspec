@@ -24,5 +24,18 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  # lib/ requires "activeadmin" at load time, so this is a hard runtime
+  # dependency, not an assumed-present host. The floor is what CI covers;
+  # the ceiling is real rather than cautious: Active Admin 4 drops the
+  # jquery-rails dependency and the app/assets/javascripts tree this gem
+  # plugs into, so none of it loads there.
+  spec.add_dependency "activeadmin", "~> 3.2"
+
+  # Active Admin 3.2 itself still allows railties >= 6.1 and Ruby >= 2.6,
+  # both of which reached end of life years ago and neither of which is
+  # tested here. Without these the gem would inherit that claim by silence.
+  spec.add_dependency "railties", ">= 7.1"
+  spec.required_ruby_version = ">= 3.2"
+
   spec.add_development_dependency "rake"
 end
