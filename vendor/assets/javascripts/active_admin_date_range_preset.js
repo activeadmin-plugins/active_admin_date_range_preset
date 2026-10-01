@@ -103,12 +103,11 @@ $(function () {
           return additional_items_html += '<div><span class="btn_date_range_' + i + '">' + el['title'] + '</span></div>';
         });
 
-        // Bind in the same tick the popup is appended. jQuery 3 reimplemented
-        // .ready() on top of a Deferred, whose .then schedules through
-        // setTimeout, so handlers attached inside it landed a macrotask late
-        // and the popup was on screen but inert until then. jQuery 4 keeps
-        // that implementation, so waiting buys nothing there either, and
-        // .ready() on a non-document collection has been deprecated since 3.0.
+        // Bind in the same tick the popup is appended. Active Admin 3 ships
+        // jQuery 3, which rebuilt .ready() on top of a Deferred whose .then
+        // schedules through setTimeout, so handlers attached inside it landed
+        // a macrotask late and the popup was on screen but inert until then.
+        // On a non-document collection the method is deprecated anyway.
         let container = $('<div style="min-width: '+e.target.offsetWidth+'px; top: '+(e.target.offsetTop)+'px; left: '+(e.target.offsetLeft)+'px" class="block_timerange">' +
           '<div><span class="btn_today">Today</span></div>' +
           '<div><span class="btn_yesterday">Yesterday</span></div>' +
