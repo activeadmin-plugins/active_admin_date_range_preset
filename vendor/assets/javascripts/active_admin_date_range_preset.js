@@ -97,7 +97,13 @@ $(function () {
           return additional_items_html += '<div><span class="btn_date_range_' + i + '">' + el['title'] + '</span></div>';
         });
 
-        $('body').append('<div style="min-width: '+e.target.offsetWidth+'px; top: '+(e.target.offsetTop)+'px; left: '+(e.target.offsetLeft)+'px" class="block_timerange">' +
+        // Bind in the same tick the popup is appended. jQuery 3 reimplemented
+        // .ready() on top of a Deferred, whose .then schedules through
+        // setTimeout, so handlers attached inside it landed a macrotask late
+        // and the popup was on screen but inert until then. jQuery 4 keeps
+        // that implementation, so waiting buys nothing there either, and
+        // .ready() on a non-document collection has been deprecated since 3.0.
+        let container = $('<div style="min-width: '+e.target.offsetWidth+'px; top: '+(e.target.offsetTop)+'px; left: '+(e.target.offsetLeft)+'px" class="block_timerange">' +
           '<div><span class="btn_today">Today</span></div>' +
           '<div><span class="btn_yesterday">Yesterday</span></div>' +
           '<div><span class="btn_week">This Week</span></div>' +
@@ -106,78 +112,76 @@ $(function () {
           '<div><span class="btn_last_month">Last Month</span></div>' +
           additional_items_html +
           '</div>'
-        ).ready(function() {
-          let container = $(this).find('.block_timerange');
+        ).appendTo('body');
 
-          // additional ranges
-          opts.add_range.forEach(function(el, i) {
-            $(container).on('click.CalendarRangeSet', '.btn_date_range_' + i, function(e) {
-              unbindClickEventBlockTimerange();
-              let start = new Date(el['start'].getFullYear(), el['start'].getMonth(), el['start'].getDate());
-              let end = new Date(el['end'].getFullYear(), el['end'].getMonth(), el['end'].getDate());
-              fillInputs(start, end)
-            });
-          });
-
-          // Today
-          $(container).on('click.CalendarRangeSet', '.btn_today', function(e) {
+        // additional ranges
+        opts.add_range.forEach(function(el, i) {
+          container.on('click.CalendarRangeSet', '.btn_date_range_' + i, function(e) {
             unbindClickEventBlockTimerange();
-            let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate());
-            let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() + 1);
-            fillInputs(start, end);
+            let start = new Date(el['start'].getFullYear(), el['start'].getMonth(), el['start'].getDate());
+            let end = new Date(el['end'].getFullYear(), el['end'].getMonth(), el['end'].getDate());
+            fillInputs(start, end)
           });
+        });
 
-          // Yesterday
-          $(container).on('click.CalendarRangeSet', '.btn_yesterday', function(e) {
+        // Today
+        container.on('click.CalendarRangeSet', '.btn_today', function(e) {
+          unbindClickEventBlockTimerange();
+          let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate());
+          let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() + 1);
+          fillInputs(start, end);
+        });
+
+        // Yesterday
+        container.on('click.CalendarRangeSet', '.btn_yesterday', function(e) {
+          unbindClickEventBlockTimerange();
+          let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - 1);
+          let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate());
+          fillInputs(start, end);
+        });
+
+        // Week
+        container.on('click.CalendarRangeSet', '.btn_week', function(e) {
+          unbindClickEventBlockTimerange();
+          let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - days_since_monday(datetime));
+          let end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 7);
+          fillInputs(start, end);
+        });
+
+        // Month
+        container.on('click.CalendarRangeSet', '.btn_month', function(e) {
+          unbindClickEventBlockTimerange();
+          let start = new Date(datetime.getFullYear(), datetime.getMonth(), 1);
+          let end = new Date(datetime.getFullYear(), datetime.getMonth() + 1, 1);
+          fillInputs(start, end);
+        });
+
+        // Last Week
+        container.on('click.CalendarRangeSet', '.btn_last_week', function(e) {
+          unbindClickEventBlockTimerange();
+          let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - days_since_monday(datetime));
+          let start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 7);
+          fillInputs(start, end);
+        });
+
+        // Last Month
+        container.on('click.CalendarRangeSet', '.btn_last_month', function(e) {
+          unbindClickEventBlockTimerange();
+          let end = new Date(datetime.getFullYear(), datetime.getMonth(), 1);
+          let start = new Date(end.getFullYear(), end.getMonth() - 1, 1);
+          fillInputs(start, end);
+        });
+
+        // Outer
+        // No stopPropagation here: this listener only watches for a click
+        // that should close the popup. Active Admin delegates Clear Filters
+        // and the has_many buttons from <document>, which is upstream of
+        // <body>, so swallowing the event would break them for as long as
+        // the popup is open.
+        $('body').on('click.CalendarRangeSet', function(e) {
+          if ($(e.target).closest('.block_timerange').length == 0) {
             unbindClickEventBlockTimerange();
-            let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - 1);
-            let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate());
-            fillInputs(start, end);
-          });
-
-          // Week
-          $(container).on('click.CalendarRangeSet', '.btn_week', function(e) {
-            unbindClickEventBlockTimerange();
-            let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - days_since_monday(datetime));
-            let end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 7);
-            fillInputs(start, end);
-          });
-
-          // Month
-          $(container).on('click.CalendarRangeSet', '.btn_month', function(e) {
-            unbindClickEventBlockTimerange();
-            let start = new Date(datetime.getFullYear(), datetime.getMonth(), 1);
-            let end = new Date(datetime.getFullYear(), datetime.getMonth() + 1, 1);
-            fillInputs(start, end);
-          });
-
-          // Last Week
-          $(container).on('click.CalendarRangeSet', '.btn_last_week', function(e) {
-            unbindClickEventBlockTimerange();
-            let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - days_since_monday(datetime));
-            let start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 7);
-            fillInputs(start, end);
-          });
-
-          // Last Month
-          $(container).on('click.CalendarRangeSet', '.btn_last_month', function(e) {
-            unbindClickEventBlockTimerange();
-            let end = new Date(datetime.getFullYear(), datetime.getMonth(), 1);
-            let start = new Date(end.getFullYear(), end.getMonth() - 1, 1);
-            fillInputs(start, end);
-          });
-
-          // Outer
-          // No stopPropagation here: this listener only watches for a click
-          // that should close the popup. Active Admin delegates Clear Filters
-          // and the has_many buttons from <document>, which is upstream of
-          // <body>, so swallowing the event would break them for as long as
-          // the popup is open.
-          $('body').on('click.CalendarRangeSet', function(e) {
-            if ($(e.target).closest('.block_timerange').length == 0) {
-              unbindClickEventBlockTimerange();
-            }
-          });
+          }
         });
       });
     });
