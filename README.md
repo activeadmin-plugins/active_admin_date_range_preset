@@ -9,13 +9,8 @@ Preset links for ActiveAdmin date_range inputs in sidebar filters in forms
 
 This is how it looks like
 
-![Step 1](/screen/step_1.jpg)
+<img width="1008" height="942" alt="combined" src="https://github.com/user-attachments/assets/cbe22410-078e-4f2b-894b-4457c13e3e22" />
 
-![Step 2](/screen/step_2.jpg)
-
-![Form 1](/screen/step_2_1.png)
-
-![Form 2](/screen/step_2_2.png)
 
 ## Compatibility
 
