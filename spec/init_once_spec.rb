@@ -8,30 +8,24 @@ describe 'initialising the same element twice', type: :feature, js: true do
   before { visit '/admin/posts' }
 
   def filter
-    page.find('.filter_date_range')
+    page.find(PageHelpers::FILTER)
   end
 
-  def init_again(options = '')
+  def init_again(options = '{}')
     page.execute_script(
-      "$('form.filter_form div.filter_date_range').date_range_ext_preset(#{options});"
+      "ActiveAdminDateRangePreset.init('#{PageHelpers::FILTER}', #{options});"
     )
   end
 
   # first, not find: with the bug there are two links, and an ambiguous-match
   # error would mask whatever the example is actually asserting.
   def pick_today
-    page.first('.filter_date_range a.btn_timerange').click
+    page.first("#{PageHelpers::FILTER} a.btn_timerange").click
     page.find('.block_timerange .btn_today').click
   end
 
-  def chosen_range
-    inputs = filter.all('input[type="text"]')
-    [inputs.first.value, inputs.last.value]
-  end
-
-  # The auto-init was dead from jQuery 3 until it was restored, so the
-  # workaround -- calling the plugin by hand in active_admin.js -- is what
-  # host apps are carrying. Both run after an upgrade.
+  # The dummy app already initialises the filter once, so these examples see
+  # a second call on the same element.
   context 'with no options' do
     before { init_again }
 
@@ -39,33 +33,30 @@ describe 'initialising the same element twice', type: :feature, js: true do
       expect(filter).to have_css('a.btn_timerange', count: 1)
     end
 
-    it 'leaves one click handler, not one per call' do
-      count = page.evaluate_script(
-        "$._data($('form.filter_form div.filter_date_range')[0], 'events').click.length"
-      )
+    it 'opens one menu, not one per call' do
+      page.first("#{PageHelpers::FILTER} a.btn_timerange").click
 
-      expect(count).to eq(1)
+      expect(page).to have_css('.block_timerange', count: 1)
     end
 
     it 'still fills the inputs' do
       pick_today
 
-      expect(chosen_range).to eq([today.strftime('%Y-%m-%d'),
-                                  (today + 1).strftime('%Y-%m-%d')])
+      expect(range_in(filter)).to eq([today.strftime('%Y-%m-%d'),
+                                      (today + 1).strftime('%Y-%m-%d')])
     end
   end
 
-  # Sprockets puts the plugin's own ready callback ahead of anything the host
-  # appends to active_admin.js, so a guard that kept the first wiring would
-  # drop the host's configuration without a word.
+  # A guard that kept the first wiring would drop the host's configuration
+  # without a word.
   context 'when the second call passes options' do
     before { init_again('{ date_to_human_readable: true }') }
 
     it 'honours them instead of discarding them' do
       pick_today
 
-      expect(chosen_range).to eq([today.strftime('%Y-%m-%d'),
-                                  today.strftime('%Y-%m-%d')])
+      expect(range_in(filter)).to eq([today.strftime('%Y-%m-%d'),
+                                      today.strftime('%Y-%m-%d')])
     end
   end
 end

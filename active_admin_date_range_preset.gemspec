@@ -18,18 +18,17 @@ Gem::Specification.new do |spec|
   # reach consumers until it is named here. The reject form needs a new
   # pattern every time the repo grows one, which is how 91 KB of README
   # screenshots ended up inside the published gem before this changed.
-  # `vendor/` is the shipped JS.
+  # `vendor/` is the shipped JS and CSS, `config/` the import map pin.
   spec.files         = `git ls-files -z -- lib app vendor config exe bin README.md LICENSE.txt`.split("\x0")
   spec.bindir        = "bin"
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   # lib/ requires "activeadmin" at load time, so this is a hard runtime
-  # dependency, not an assumed-present host. The floor is what CI covers;
-  # the ceiling is real rather than cautious: Active Admin 4 drops the
-  # jquery-rails dependency and the app/assets/javascripts tree this gem
-  # plugs into, so none of it loads there.
-  spec.add_dependency "activeadmin", "~> 3.2"
+  # dependency, not an assumed-present host. The floor is what CI covers.
+  # Active Admin 3 loads the script through Sprockets, Active Admin 4 through
+  # its import map.
+  spec.add_dependency "activeadmin", ">= 3.2", "< 5"
 
   # Active Admin 3.2 itself still allows railties >= 6.1 and Ruby >= 2.6,
   # both of which reached end of life years ago. Declare what CI covers, so

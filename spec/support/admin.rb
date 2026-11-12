@@ -5,6 +5,9 @@ def add_post_resource
     permit_params :title, :body, :published_at
 
     filter :created_at, as: :date_range
+    # Both inputs in one .datetime_preset_pair wrapper, the markup
+    # active_admin_datetimepicker's range filter renders. Auto-initialised.
+    filter :published_at, as: :date_range, wrapper_html: { class: 'datetime_preset_pair' }
 
     form do |f|
       f.inputs do
@@ -41,6 +44,29 @@ def add_post_resource_with_two_pairs
         # spec can drive it with explicit options.
         f.input :title, as: :string,
                 wrapper_html: { class: 'manual_preset_pair', data: { show_time: 'false' } }
+      end
+      f.actions
+    end
+  end
+
+  Rails.application.reload_routes!
+end
+
+# Native pickers: the plugin writes ISO values into them on any Active Admin.
+def add_post_resource_with_native_pickers
+  ActiveAdmin.register Post do
+    config.filters = false
+
+    permit_params :title, :body, :published_at, :created_at, :updated_at
+
+    form do |f|
+      f.inputs do
+        f.input :published_at, as: :datetime_picker,
+                wrapper_html: { class: 'datetime_preset_pair' }
+        f.input :created_at, as: :datetime_picker
+        f.input :updated_at, as: :date_picker,
+                wrapper_html: { class: 'datetime_preset_pair' }
+        f.input :title, as: :date_picker
       end
       f.actions
     end

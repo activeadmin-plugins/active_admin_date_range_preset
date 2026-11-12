@@ -5,12 +5,11 @@ describe 'week presets', type: :feature, js: true do
   before { add_post_resource }
 
   def open_presets
-    page.find('.filter_date_range a.btn_timerange').click
+    page.find("#{PageHelpers::FILTER} a.btn_timerange").click
   end
 
   def chosen_range
-    inputs = page.find('.filter_date_range').all('input[type="text"]')
-    [inputs.first.value, inputs.last.value]
+    range_in(page.find(PageHelpers::FILTER))
   end
 
   # Midday UTC, so the runner's own offset cannot move the date.
