@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   # dependency, not an assumed-present host. The floor is what CI covers.
   # Active Admin 3 loads the script through Sprockets, Active Admin 4 through
   # its import map.
-  spec.add_dependency "activeadmin", ">= 3.2", "< 5"
+  spec.add_dependency "activeadmin", ">= 3.2", "< 5.0.0.a"
 
   # Active Admin 3.2 itself still allows railties >= 6.1 and Ruby >= 2.6,
   # both of which reached end of life years ago. Declare what CI covers, so
