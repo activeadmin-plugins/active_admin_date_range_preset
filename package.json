@@ -27,6 +27,6 @@
     "src/**/*"
   ],
   "scripts": {
-    "prepublishOnly": "rm -rf src && cp -R vendor/assets/javascripts/ src && cp -R vendor/assets/stylesheets/ src"
+    "prepublishOnly": "rm -rf src && mkdir src && cp vendor/assets/javascripts/*.js vendor/assets/stylesheets/*.css src/"
   }
 }

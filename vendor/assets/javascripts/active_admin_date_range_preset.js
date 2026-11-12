@@ -38,16 +38,20 @@
       return [start, day(start, 7)];
     } },
     { key: 'month', title: 'This Month', range: function (now) {
-      return [new Date(now.getFullYear(), now.getMonth(), 1),
-              new Date(now.getFullYear(), now.getMonth() + 1, 1)];
+      return [
+        new Date(now.getFullYear(), now.getMonth(), 1),
+        new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      ];
     } },
     { key: 'last_week', title: 'Last Week', range: function (now) {
       var end = day(now, -daysSinceMonday(now));
       return [day(end, -7), end];
     } },
     { key: 'last_month', title: 'Last Month', range: function (now) {
-      return [new Date(now.getFullYear(), now.getMonth() - 1, 1),
-              new Date(now.getFullYear(), now.getMonth(), 1)];
+      return [
+        new Date(now.getFullYear(), now.getMonth() - 1, 1),
+        new Date(now.getFullYear(), now.getMonth(), 1)
+      ];
     } }
   ];
 
@@ -101,9 +105,12 @@
     input.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
+  // Also takes a jQuery object, which hosts migrating from the jQuery plugin
+  // still pass.
   function resolveInput(option) {
     if (!option) { return null; }
-    return typeof option === 'string' ? document.querySelector(option) : option;
+    if (typeof option === 'string') { return document.querySelector(option); }
+    return option.jquery ? option[0] || null : option;
   }
 
   function fieldInputs(el) {
@@ -111,15 +118,16 @@
   }
 
   // A wrapper holding both inputs (a date_range filter) uses its first and
-  // last. A Formtastic form pair is two wrappers with one input each, so the
-  // "to" input lives in the next wrapper.
+  // last. A Formtastic .datetime_preset_pair is two wrappers with one input
+  // each, so the "to" input lives in the next wrapper. Only that class looks
+  // there: any other element must not write into an unrelated next field.
   function detectInputs(el, options) {
     var inputs = fieldInputs(el);
     var gteq = inputs[0];
     var lteq = inputs[inputs.length - 1];
     var next = el.nextElementSibling;
-    // A lone input with no partner gets only the start, not both ends.
-    if (inputs.length < 2) {
+    // A lone pair input with no partner gets only the start, not both ends.
+    if (inputs.length < 2 && el.classList.contains('datetime_preset_pair')) {
       lteq = (next && fieldInputs(next)[0]) || null;
     }
     return [resolveInput(options.gteq_input) || gteq, resolveInput(options.lteq_input) || lteq];
@@ -188,8 +196,16 @@
         var buttons = Array.prototype.slice.call(menu.querySelectorAll('[data-date-range-preset]'));
         var step = e.key === 'ArrowDown' ? 1 : -1;
         var at = buttons.indexOf(document.activeElement);
+        // With no preset focused, ArrowUp starts from the bottom.
+        if (at === -1) { at = step === 1 ? -1 : 0; }
         buttons[(at + step + buttons.length) % buttons.length].focus();
       }
+    });
+
+    // Tabbing out of the menu closes it. A null relatedTarget is a click on
+    // something unfocusable, which onOutsideClick already handles.
+    menu.addEventListener('focusout', function (e) {
+      if (e.relatedTarget && !menu.contains(e.relatedTarget)) { closeOpenMenu(); }
     });
 
     // No stopPropagation: this listener only watches for a click that should
@@ -224,7 +240,8 @@
   // Read at click time: on Active Admin 4 the module, and so the auto-init,
   // runs before a host module that imports it can set defaults.
   function currentOptions(el, options) {
-    var opts = Object.assign({}, defaults, options);
+    // api.defaults, so a host that replaces the whole object is still heard.
+    var opts = Object.assign({}, api.defaults, options);
     opts.add_range = opts.add_range || [];
 
     // The attribute is authoritative in both directions when present.
@@ -285,7 +302,8 @@
     return elements;
   }
 
-  window.ActiveAdminDateRangePreset = { defaults: defaults, init: init };
+  var api = { defaults: defaults, init: init };
+  window.ActiveAdminDateRangePreset = api;
 
   function autoInit() {
     init('.datetime_preset_pair');

@@ -42,8 +42,7 @@ describe 'initialising the same element twice', type: :feature, js: true do
     it 'still fills the inputs' do
       pick_today
 
-      expect(range_in(filter)).to eq([today.strftime('%Y-%m-%d'),
-                                      (today + 1).strftime('%Y-%m-%d')])
+      expect(range_in(filter)).to eq([today.strftime('%Y-%m-%d'), (today + 1).strftime('%Y-%m-%d')])
     end
   end
 
@@ -55,8 +54,7 @@ describe 'initialising the same element twice', type: :feature, js: true do
     it 'honours them instead of discarding them' do
       pick_today
 
-      expect(range_in(filter)).to eq([today.strftime('%Y-%m-%d'),
-                                      today.strftime('%Y-%m-%d')])
+      expect(range_in(filter)).to eq([today.strftime('%Y-%m-%d'), today.strftime('%Y-%m-%d')])
     end
   end
 end

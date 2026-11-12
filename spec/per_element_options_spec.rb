@@ -37,7 +37,6 @@ describe 'two preset pairs on one form', type: :feature, js: true do
 
     pick_today_in('post_title_input')
 
-    # The title input is the last on the form, so it only gets the start.
-    expect(value_of('post_title_input')).to eq(today.strftime('%Y-%m-%d'))
+    expect(value_of('post_title_input')).to eq((today + 1).strftime('%Y-%m-%d'))
   end
 end

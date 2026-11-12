@@ -61,11 +61,9 @@ def add_post_resource_with_native_pickers
 
     form do |f|
       f.inputs do
-        f.input :published_at, as: :datetime_picker,
-                wrapper_html: { class: 'datetime_preset_pair' }
+        f.input :published_at, as: :datetime_picker, wrapper_html: { class: 'datetime_preset_pair' }
         f.input :created_at, as: :datetime_picker
-        f.input :updated_at, as: :date_picker,
-                wrapper_html: { class: 'datetime_preset_pair' }
+        f.input :updated_at, as: :date_picker, wrapper_html: { class: 'datetime_preset_pair' }
         f.input :title, as: :date_picker
       end
       f.actions
