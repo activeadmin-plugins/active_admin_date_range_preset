@@ -167,7 +167,7 @@ The value format follows the input's `type`:
 | Input | Value |
 | --- | --- |
 | `type="date"` | `2015-06-10` |
-| `type="datetime-local"` | `2015-06-10T00:00` |
+| `type="datetime-local"` | `2015-06-10T00:00`, with `:SS` when its `step` allows seconds |
 | text | `2015-06-10`, or `2015-06-10 00:00:00` with `show_time` |
 
 `data-show-time` overrides `show_time` for that pair, in both directions.

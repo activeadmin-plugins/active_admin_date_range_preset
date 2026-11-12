@@ -35,10 +35,21 @@ describe 'native date and datetime-local inputs', type: :feature, js: true do
     expect(value_of('post_title_input')).to eq('2026-10-05')
   end
 
+  # Formtastic's datetime_picker renders step="1", so seconds are valid.
   it 'keeps the end of a human-readable range on the same day' do
     page.execute_script(
       "ActiveAdminDateRangePreset.init('#post_published_at_input', { date_to_human_readable: true });"
     )
+    pick('post_published_at_input', 'today')
+
+    expect(value_of('post_created_at_input')).to eq('2026-09-30T23:59:59')
+  end
+
+  it 'drops the seconds when the input step is whole minutes' do
+    page.execute_script(<<~JS)
+      document.querySelector('#post_created_at_input input').removeAttribute('step');
+      ActiveAdminDateRangePreset.init('#post_published_at_input', { date_to_human_readable: true });
+    JS
     pick('post_published_at_input', 'today')
 
     expect(value_of('post_created_at_input')).to eq('2026-09-30T23:59')

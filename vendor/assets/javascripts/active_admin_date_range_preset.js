@@ -70,9 +70,17 @@
   function formatFor(input, date, opts) {
     var ymd = date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
     var hm = pad(date.getHours()) + ':' + pad(date.getMinutes());
+    var hms = hm + ':' + pad(date.getSeconds());
     if (input.type === 'date') { return ymd; }
-    if (input.type === 'datetime-local') { return ymd + 'T' + hm; }
-    return opts.show_time ? ymd + ' ' + hm + ':' + pad(date.getSeconds()) : ymd;
+    if (input.type === 'datetime-local') { return ymd + 'T' + (allowsSeconds(input) ? hms : hm); }
+    return opts.show_time ? ymd + ' ' + hms : ymd;
+  }
+
+  // The default step of a datetime-local input is 60 seconds, and a value with
+  // seconds then fails validation and blocks the form submit.
+  function allowsSeconds(input) {
+    var step = input.getAttribute('step');
+    return step === 'any' || (step !== null && Number(step) % 60 !== 0);
   }
 
   // "Now" in UTC shifted by hours_offset, as a local Date whose fields hold

@@ -27,7 +27,8 @@
 ### Added
 
 - Active Admin 4 support: the module is pinned into `ActiveAdmin.importmap`.
-- `date` inputs get `YYYY-MM-DD` and `datetime-local` inputs get `YYYY-MM-DDTHH:MM`.
+- `date` inputs get `YYYY-MM-DD` and `datetime-local` inputs get `YYYY-MM-DDTHH:MM`,
+  plus seconds when the input's `step` allows them.
 - Dark mode for the menu under the `.dark` class.
 - `data-date-range-preset-toggle`, `data-date-range-preset-menu` and
   `data-date-range-preset="<key>"` hooks.
