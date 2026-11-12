@@ -110,8 +110,9 @@
     var gteq = inputs[0];
     var lteq = inputs[inputs.length - 1];
     var next = el.nextElementSibling;
-    if (inputs.length < 2 && next && fieldInputs(next)[0]) {
-      lteq = fieldInputs(next)[0];
+    // A lone input with no partner gets only the start, not both ends.
+    if (inputs.length < 2) {
+      lteq = (next && fieldInputs(next)[0]) || null;
     }
     return [resolveInput(options.gteq_input) || gteq, resolveInput(options.lteq_input) || lteq];
   }
@@ -170,9 +171,16 @@
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         choose(e.target);
+        toggle.focus();
       } else if (e.key === 'Escape') {
         closeOpenMenu();
         toggle.focus();
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        var buttons = Array.prototype.slice.call(menu.querySelectorAll('[data-date-range-preset]'));
+        var step = e.key === 'ArrowDown' ? 1 : -1;
+        var at = buttons.indexOf(document.activeElement);
+        buttons[(at + step + buttons.length) % buttons.length].focus();
       }
     });
 
@@ -199,6 +207,22 @@
     var overflow = menu.getBoundingClientRect().right - document.documentElement.clientWidth;
     if (overflow > 0) { menu.style.left = Math.max(0, box.left + window.scrollX - overflow) + 'px'; }
     toggle.setAttribute('aria-expanded', 'true');
+
+    // The menu sits at the end of <body>, out of the tab order near the link.
+    var first = menu.querySelector('[data-date-range-preset]');
+    if (first) { first.focus(); }
+  }
+
+  // Read at click time: on Active Admin 4 the module, and so the auto-init,
+  // runs before a host module that imports it can set defaults.
+  function currentOptions(el, options) {
+    var opts = Object.assign({}, defaults, options);
+    opts.add_range = opts.add_range || [];
+
+    // The attribute is authoritative in both directions when present.
+    var showTime = el.getAttribute('data-show-time');
+    if (showTime !== null) { opts.show_time = showTime === 'true'; }
+    return opts;
   }
 
   function initElement(el, options) {
@@ -206,13 +230,6 @@
     // call with options after the auto-init wins. The listener lives on the
     // link, so dropping the old link drops the old wiring with it.
     el.querySelectorAll('[data-date-range-preset-toggle]').forEach(function (link) { link.remove(); });
-
-    var opts = Object.assign({}, defaults, options);
-    opts.add_range = opts.add_range || [];
-
-    // The attribute is authoritative in both directions when present.
-    var showTime = el.getAttribute('data-show-time');
-    if (showTime !== null) { opts.show_time = showTime === 'true'; }
 
     var inputs = detectInputs(el, options);
     var gteq = inputs[0];
@@ -237,6 +254,7 @@
     toggle.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
+      var opts = currentOptions(el, options);
       openMenu(toggle, opts, function (range) {
         var end = range[1];
         if (opts.date_to_human_readable) { end = new Date(end.getTime() - 1000); }

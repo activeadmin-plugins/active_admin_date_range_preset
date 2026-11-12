@@ -18,7 +18,11 @@
   and `$.fn.date_range_ext_preset.defaults.show_time = true` becomes
   `ActiveAdminDateRangePreset.defaults.show_time = true`.
 - `gteq_input` and `lteq_input` take CSS selectors or elements, not jQuery selectors.
-- The stylesheet is plain CSS. `@import "active_admin_date_range_preset";` still works.
+- The stylesheet is plain CSS: `active_admin_date_range_preset.scss` is now
+  `active_admin_date_range_preset.css`, in the gem and the npm package. A bare
+  `@import "active_admin_date_range_preset";` still works.
+- Filling an input fires bubbling `input` and `change` events.
+- `add_range` titles are plain text; HTML in a title is shown as written.
 
 ### Added
 
@@ -29,3 +33,5 @@
   `data-date-range-preset="<key>"` hooks.
 - A `.datetime_preset_pair` wrapper that holds both inputs, such as a range filter,
   fills its own first and last input.
+- Opening the menu focuses the first preset. Arrow keys move between presets,
+  Enter or Space picks one and Escape closes the menu.

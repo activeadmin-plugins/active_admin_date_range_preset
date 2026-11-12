@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
 ```
 
 To turn it on for every pair, including the ones set up automatically, set
-the default instead, outside any `DOMContentLoaded` callback:
+the default instead:
 
 ```javascript
 ActiveAdminDateRangePreset.defaults.show_time = true;
@@ -244,8 +244,8 @@ key: `today`, `yesterday`, `week`, `month`, `last_week`, `last_month`, then
 ## Settings
 
 Pass settings to `init` for some elements, or set them for every later `init`
-on `ActiveAdminDateRangePreset.defaults`. Set defaults before the page finishes
-loading, since pairs are set up on `DOMContentLoaded`.
+on `ActiveAdminDateRangePreset.defaults`. Defaults are read each time a menu
+opens, so they apply to pairs that were set up before you changed them.
 
 ```javascript
 // End date is the same day, not the next one.
