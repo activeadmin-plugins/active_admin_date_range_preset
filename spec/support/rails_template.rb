@@ -14,6 +14,9 @@ generate :model, 'post title:string body:text published_at:datetime --force'
 inject_into_file "app/models/post.rb",
   "  def self.ransackable_attributes(auth_object = nil)\n" \
   "    [\"title\", \"body\", \"published_at\", \"created_at\"]\n" \
+  "  end\n\n" \
+  "  def self.ransackable_associations(auth_object = nil)\n" \
+  "    []\n" \
   "  end\n",
   after: "ApplicationRecord\n"
 
