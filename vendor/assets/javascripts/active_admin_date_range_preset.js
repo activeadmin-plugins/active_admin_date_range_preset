@@ -87,6 +87,13 @@
     return step === 'any' || (step !== null && Number(step) % 60 !== 0);
   }
 
+  // active_admin_datetimepicker's lteq_datetime_picker predicate is a strict
+  // `<`: its range ends at the first instant after the last day. An input
+  // cannot hold 23:59:59.999, so date_to_human_readable must not step back.
+  function exclusiveEnd(input) {
+    return !!input && /_lteq_datetime_picker\]?$/.test(input.name || '');
+  }
+
   // "Now" in UTC shifted by hours_offset, as a local Date whose fields hold
   // those wall-clock values.
   function shiftedNow(opts) {
@@ -282,7 +289,7 @@
       var opts = currentOptions(el, options);
       openMenu(toggle, opts, function (range) {
         var end = range[1];
-        if (opts.date_to_human_readable) { end = new Date(end.getTime() - 1000); }
+        if (opts.date_to_human_readable && !exclusiveEnd(lteq)) { end = new Date(end.getTime() - 1000); }
         if (gteq) { setValue(gteq, formatFor(gteq, range[0], opts)); }
         if (lteq) { setValue(lteq, formatFor(lteq, end, opts)); }
       });

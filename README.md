@@ -271,6 +271,10 @@ When normal human say "2015-06-12" hi means "2015-06-12 23:59:59"
 But default behavior in programming is "2015-06-12" = "2015-06-12 00:00:00"
 Be careful with this options. Cause if you change it to "true" you will also need to change your server-side scripts to search "humanize-way".
 
+An end input named `*_lteq_datetime_picker`, as active_admin_datetimepicker renders,
+is the exception. Its predicate is a strict `<`, so the end stays the start of the
+next day (`2015-06-13T00:00`) and no last minute of the day is lost.
+
 ### show_time
 
 value: true/false
@@ -309,6 +313,24 @@ ActiveAdminDateRangePreset.init('form.filter_form div.filter_date_range', {
   ]
 });
 ```
+
+## Page objects
+
+Page objects for tests, built on [active_admin_page_objects](https://github.com/activeadmin-plugins/active_admin_page_objects) 2.x. They are optional and need Active Admin 4. Add that gem to your test group and require the file from your spec helper:
+
+```ruby
+require 'active_admin_date_range_preset/page_objects'
+```
+
+Every date range filter then has `choose_preset` and `range`. A JavaScript driver is needed.
+
+```ruby
+filter = index.filters.filter(:created_at)
+filter.choose_preset('Last 7 days') # => ["2026-09-24", "2026-10-01"]
+filter.range # => the same
+```
+
+`choose_preset` opens the "Set range" menu and picks the item whose whole text is the title, ignoring case: a built-in preset or one from `add_range`. It raises `Capybara::ElementNotFound`, naming the presets on offer, when there is none. `range` is what the two inputs hold, as text. A filter class built on `DateRangeFilter`, such as the one in active_admin_datetimepicker's page objects, has both and keeps its own `range`.
 
 ## Development
 
