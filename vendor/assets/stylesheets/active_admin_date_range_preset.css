@@ -1,0 +1,63 @@
+/* Plain CSS: Sprockets serves it to Active Admin 3 and a Tailwind entry can
+   @import it on Active Admin 4. Dark mode follows Active Admin 4's .dark class. */
+
+form label.datetime_preset_filter_label .btn_timerange {
+  float: right;
+  margin: -2px 8px 0 0;
+  text-decoration: none;
+  border-bottom: 1px dashed;
+  line-height: 1.4em;
+}
+
+form label.datetime_preset_filter_label .btn_timerange:hover {
+  border-bottom: 0 none;
+}
+
+/* A form pair gets Active Admin's full label column, wide enough that the
+   float above parks the link far from the inputs it drives. Put it on its own
+   line under the label text; `display: table` keeps it shrink-to-fit. Sidebar
+   filters are divs, not lis, and keep the float. */
+li.datetime_preset_pair > label.datetime_preset_filter_label .btn_timerange {
+  float: none;
+  display: table;
+  margin: 2px 0 0 0;
+}
+
+.block_timerange {
+  position: absolute;
+  z-index: 50;
+  display: block;
+  border: 1px solid #000;
+  padding: 5px 10px;
+  text-align: center;
+  background-color: #f4f4f4;
+}
+
+.block_timerange > div {
+  margin-top: 10px;
+}
+
+.block_timerange > div:last-child {
+  margin-bottom: 10px;
+}
+
+.block_timerange > div span {
+  color: #2e86cc;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+  border-bottom: 1px dashed;
+}
+
+.block_timerange > div span:hover {
+  border-bottom: 0 none;
+}
+
+.block_timerange:where(.dark, .dark *) {
+  border-color: #4b5563;
+  background-color: #1f2937;
+}
+
+.block_timerange:where(.dark, .dark *) > div span {
+  color: #60a5fa;
+}

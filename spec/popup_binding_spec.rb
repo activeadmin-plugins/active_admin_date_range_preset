@@ -8,7 +8,7 @@ describe 'binding the preset handlers', type: :feature, js: true do
   before { visit '/admin/posts' }
 
   def gteq_value
-    page.find('.filter_date_range').all('input[type="text"]').first.value
+    field_inputs(page.find(PageHelpers::FILTER)).first.value
   end
 
   # Both clicks happen in one task, so the preset is clicked in the same tick
@@ -16,11 +16,11 @@ describe 'binding the preset handlers', type: :feature, js: true do
   # yet and the click lands on nothing.
   # Wait for the link through Capybara first, otherwise a page that has not
   # finished rendering fails as a JS TypeError instead of an assertion.
-  before { page.find('.filter_date_range a.btn_timerange') }
+  before { page.find("#{PageHelpers::FILTER} a.btn_timerange") }
 
   it 'has the presets live as soon as the popup is in the document' do
     page.execute_script(<<~JS)
-      var btn = document.querySelector('.filter_date_range a.btn_timerange');
+      var btn = document.querySelector('#q_created_at_input a.btn_timerange');
       btn.click();
       document.querySelector('.block_timerange .btn_today').click();
     JS
@@ -30,7 +30,7 @@ describe 'binding the preset handlers', type: :feature, js: true do
 
   it 'has the dismissal listener live just as soon' do
     page.execute_script(<<~JS)
-      document.querySelector('.filter_date_range a.btn_timerange').click();
+      document.querySelector('#q_created_at_input a.btn_timerange').click();
       document.body.click();
     JS
 

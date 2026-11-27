@@ -44,6 +44,8 @@ require 'capybara/rspec'
 require 'support/admin'
 require 'support/capybara'
 require 'support/browser_time'
+require 'support/tailwind'
+require 'support/page_helpers'
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = false

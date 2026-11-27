@@ -7,15 +7,10 @@ describe 'date range preset', type: :feature, js: true do
 
   before { add_post_resource }
 
-  def preset_inputs(scope)
-    inputs = scope.all('input[type="text"]')
-    [inputs.first, inputs.last]
-  end
-
   context 'date_range filter in the sidebar' do
     before { visit '/admin/posts' }
 
-    let(:filter) { page.find('.filter_date_range') }
+    let(:filter) { page.find(PageHelpers::FILTER) }
 
     it 'adds a "Set range" link to the filter label' do
       expect(filter).to have_css('label.datetime_preset_filter_label a.btn_timerange', text: /set range/i)
@@ -45,9 +40,7 @@ describe 'date range preset', type: :feature, js: true do
       filter.find('a.btn_timerange').click
       page.find('.block_timerange .btn_today').click
 
-      gteq, lteq = preset_inputs(filter)
-      expect(gteq.value).to eq(today.strftime('%Y-%m-%d'))
-      expect(lteq.value).to eq((today + 1).strftime('%Y-%m-%d'))
+      expect(range_in(filter)).to eq([today.strftime('%Y-%m-%d'), (today + 1).strftime('%Y-%m-%d')])
       expect(page).to have_no_css('.block_timerange')
     end
 
@@ -55,18 +48,14 @@ describe 'date range preset', type: :feature, js: true do
       filter.find('a.btn_timerange').click
       page.find('.block_timerange .btn_yesterday').click
 
-      gteq, lteq = preset_inputs(filter)
-      expect(gteq.value).to eq((today - 1).strftime('%Y-%m-%d'))
-      expect(lteq.value).to eq(today.strftime('%Y-%m-%d'))
+      expect(range_in(filter)).to eq([(today - 1).strftime('%Y-%m-%d'), today.strftime('%Y-%m-%d')])
     end
 
     it 'fills both inputs with this month' do
       filter.find('a.btn_timerange').click
       page.find('.block_timerange .btn_month').click
 
-      gteq, lteq = preset_inputs(filter)
-      expect(gteq.value).to eq(today.strftime('%Y-%m-01'))
-      expect(lteq.value).to eq((today.next_month).strftime('%Y-%m-01'))
+      expect(range_in(filter)).to eq([today.strftime('%Y-%m-01'), today.next_month.strftime('%Y-%m-01')])
     end
 
     it 'fills both inputs with this week, monday to monday' do
@@ -74,9 +63,7 @@ describe 'date range preset', type: :feature, js: true do
       page.find('.block_timerange .btn_week').click
 
       monday = today - ((today.wday - 1) % 7)
-      gteq, lteq = preset_inputs(filter)
-      expect(gteq.value).to eq(monday.strftime('%Y-%m-%d'))
-      expect(lteq.value).to eq((monday + 7).strftime('%Y-%m-%d'))
+      expect(range_in(filter)).to eq([monday.strftime('%Y-%m-%d'), (monday + 7).strftime('%Y-%m-%d')])
     end
 
     it 'filters the collection by the chosen range' do
@@ -84,7 +71,7 @@ describe 'date range preset', type: :feature, js: true do
       Post.create!(title: 'fresh')
 
       visit '/admin/posts'
-      page.find('.filter_date_range a.btn_timerange').click
+      page.find("#{PageHelpers::FILTER} a.btn_timerange").click
       page.find('.block_timerange .btn_today').click
       page.find('input[type="submit"]').click
 
@@ -108,6 +95,21 @@ describe 'date range preset', type: :feature, js: true do
 
       expect(pair.find('input[type="text"]').value)
         .to eq(today.strftime('%Y-%m-%d 00:00:00'))
+    end
+  end
+
+  # active_admin_datetimepicker puts .datetime_preset_pair on a range filter
+  # wrapper that holds both inputs, so the auto-init has to fill both of them.
+  context 'datetime_preset_pair auto-init on a range filter' do
+    before { visit '/admin/posts' }
+
+    let(:filter) { page.find('#q_published_at_input') }
+
+    it 'fills the first and last input of the wrapper' do
+      filter.find('a.btn_timerange').click
+      page.find('.block_timerange .btn_today').click
+
+      expect(range_in(filter)).to eq([today.strftime('%Y-%m-%d'), (today + 1).strftime('%Y-%m-%d')])
     end
   end
 end

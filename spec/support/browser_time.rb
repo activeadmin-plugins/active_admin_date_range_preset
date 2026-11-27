@@ -1,8 +1,7 @@
-# Every preset the plugin offers is derived from one "now", read once when
-# date_range_ext_preset() runs. Pinning that value is the only way to assert a
-# specific calendar day, so install the stub through CDP before any of the
-# page's own scripts run rather than after the plugin has already read the
-# clock.
+# Every preset the plugin offers is derived from "now", read when a preset is
+# picked. Pinning that value is the only way to assert a specific calendar
+# day, so install the stub through CDP before any of the page's own scripts
+# run.
 module BrowserTime
   def freeze_browser_time(iso)
     source = <<~JS

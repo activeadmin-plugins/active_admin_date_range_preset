@@ -49,7 +49,7 @@ describe 'where the "Set range" link sits', type: :feature, js: true do
   context 'in the sidebar filter' do
     before { visit '/admin/posts' }
 
-    let(:geometry) { geometry_of('.filter_date_range') }
+    let(:geometry) { geometry_of(PageHelpers::FILTER) }
 
     it 'stays pinned to the right of the label' do
       label_right = geometry['label']['left'] + geometry['label']['width']

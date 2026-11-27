@@ -6,7 +6,7 @@ describe 'clicking outside the preset popup', type: :feature, js: true do
   before { visit '/admin/posts' }
 
   def open_presets
-    page.find('.filter_date_range a.btn_timerange').click
+    page.find("#{PageHelpers::FILTER} a.btn_timerange").click
   end
 
   def apply_todays_range
@@ -23,7 +23,7 @@ describe 'clicking outside the preset popup', type: :feature, js: true do
     expect(page).to have_current_path(/q(%5B|%5b|\[)/)
 
     open_presets
-    page.find('.clear_filters_btn').click
+    page.find(clear_filters_selector).click
 
     # _clearForm drops the q[...] params and keeps the rest, so assert on
     # the filter params alone rather than on a bare path.

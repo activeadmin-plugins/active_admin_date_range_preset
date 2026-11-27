@@ -33,7 +33,7 @@ describe 'two preset pairs on one form', type: :feature, js: true do
   # them to opt out, and the attribute was write-only: the guard assigned
   # true and never false.
   it 'lets data-show-time="false" opt back out of a call that asked for time' do
-    page.execute_script("$('.manual_preset_pair').date_range_ext_preset({ show_time: true });")
+    page.execute_script("ActiveAdminDateRangePreset.init('.manual_preset_pair', { show_time: true });")
 
     pick_today_in('post_title_input')
 

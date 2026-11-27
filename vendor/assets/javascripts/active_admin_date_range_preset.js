@@ -1,216 +1,10 @@
-$(function () {
-  // options:
-  //  gteq_input: jQuery-selecotr for input date_from
-  //  lteq_input: jQuery-selecotr for input date_to
-  //  hours_offset: Int number - hours +/- to correct time
-  $.fn.date_range_ext_preset = function(options) {
-    // settings
-    options = options || {};
-    let opts = $.extend({}, $.fn.date_range_ext_preset.defaults, options);
+// Plain script with no imports or exports, so the same file runs as a classic
+// script (Sprockets on Active Admin 3) and as an ES module (importmap on
+// Active Admin 4). Either way the API is window.ActiveAdminDateRangePreset.
+(function () {
+  if (window.ActiveAdminDateRangePreset) { return; }
 
-    // aditional functions
-    function num_with_leading_zero(num, digitsCount = 2) {
-      let s = num + '';
-      while (s.length < digitsCount) {
-        s = '0' + s;
-      }
-      return s;
-    }
-
-    // formated date YYYY-MM-DD, with converting to UTC
-    // note: getMonth Returns the month (from 0-11), so we do +1
-    function formatDate(date, el_opts) {
-      let str = date.getFullYear() + '-' + num_with_leading_zero(date.getMonth()+1) + '-' + num_with_leading_zero(date.getDate());
-      if (el_opts.show_time) {
-        str += (' ' + num_with_leading_zero(date.getHours()) + ':' + num_with_leading_zero(date.getMinutes()) + ':' + num_with_leading_zero(date.getSeconds()));
-      }
-      return str;
-    }
-
-    // Days from the Monday that opens this date's week. getDay() counts from
-    // Sunday, so a plain `- getDay() + 1` lands on tomorrow for Sundays and
-    // hands back the week that has not started yet.
-    function days_since_monday(date) {
-      return (date.getDay() + 6) % 7;
-    }
-
-    function unbindClickEventBlockTimerange() {
-      $('.block_timerange').remove();
-      $('body').off('click.CalendarRangeSet');
-    }
-
-    // local datetime now
-    let now = new Date();
-    // UTC datetime now
-    let now_utc = new Date(
-      now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
-      now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(),
-      now.getUTCMilliseconds()
-    );
-    // datetime object, UTC with hours offset
-    let datetime = new Date(now_utc.getTime() + opts.hours_offset * 60 * 60 * 1000);
-
-    // PLUGIN BEGIN
-    return this.each(function(i, el) {
-      let $this = $(el);
-
-      // Re-initialising an element replaces its wiring instead of adding to
-      // it. The auto-init below was dead from jQuery 3 onwards, so hosts
-      // worked around it by calling the plugin themselves; now that it works
-      // again both run, and without this the label grows a second "Set range"
-      // whose handler tears down the first one's popup.
-      //
-      // Replacing rather than skipping matters: the auto-init registers its
-      // ready callback before anything a host adds to active_admin.js, so
-      // bailing out on the second call would silently drop the host's
-      // options. Reading the link itself rather than a data flag keeps the
-      // guard and the thing it guards from drifting apart across clone() and
-      // Turbo cache restores, which copy the node but not jQuery's data.
-      $this.find('a.btn_timerange').remove();
-      $this.off('click.dateRangeExtPreset');
-
-      // Per element, because data-show-time is read off the element itself.
-      // Writing it back into the shared opts let one pair's setting reach
-      // every other pair in the same call, and formatDate reads the flag at
-      // click time rather than here, so the leak was not even order-dependent.
-      let el_opts = $.extend({}, opts);
-
-      // The attribute is authoritative in both directions when present. Only
-      // ever assigning true made it impossible for one element to opt out of
-      // a show_time the call or the defaults had turned on.
-      if (typeof $this.data('show-time') != 'undefined') {
-        el_opts.show_time = $this.data('show-time').toString() == 'true';
-      }
-
-      // detect inputs
-      let lteq_input = $this.find('input:last');
-      if (options.lteq_input) {
-        lteq_input = $(options.lteq_input);
-      } else if ($this.hasClass('datetime_preset_pair')) {
-        lteq_input = $this.next().find('input');
-      }
-
-      let gteq_input = $this.find('input:first');
-      if (options.gteq_input) {
-        gteq_input = $(options.gteq_input);
-      } else if ($this.hasClass('datetime_preset_pair')) {
-        gteq_input = $this.find('input');
-      }
-
-      // filter modifying
-      let main_btn_html = '<a href="#" class="btn_timerange">Set range</a>';
-      $this.find('label').addClass('datetime_preset_filter_label').append(main_btn_html);
-
-      // helper
-      function fillInputs(start, end) {
-        gteq_input.val(formatDate(start, el_opts));
-        if (el_opts.date_to_human_readable) {
-          end.setTime(end.getTime() - 1000);
-        }
-
-        lteq_input.val(formatDate(end, el_opts));
-      }
-
-      $this.on('click.dateRangeExtPreset', '.btn_timerange', function(e) {
-        unbindClickEventBlockTimerange();
-        e.stopPropagation();
-        e.preventDefault();
-
-        let additional_items_html = '';
-        opts.add_range.forEach(function(el, i) {
-          return additional_items_html += '<div><span class="btn_date_range_' + i + '">' + el['title'] + '</span></div>';
-        });
-
-        // Bind in the same tick the popup is appended. Active Admin 3 ships
-        // jQuery 3, which rebuilt .ready() on top of a Deferred whose .then
-        // schedules through setTimeout, so handlers attached inside it landed
-        // a macrotask late and the popup was on screen but inert until then.
-        // On a non-document collection the method is deprecated anyway.
-        let container = $('<div style="min-width: '+e.target.offsetWidth+'px; top: '+(e.target.offsetTop)+'px; left: '+(e.target.offsetLeft)+'px" class="block_timerange">' +
-          '<div><span class="btn_today">Today</span></div>' +
-          '<div><span class="btn_yesterday">Yesterday</span></div>' +
-          '<div><span class="btn_week">This Week</span></div>' +
-          '<div><span class="btn_month">This Month</span></div>' +
-          '<div><span class="btn_last_week">Last Week</span></div>' +
-          '<div><span class="btn_last_month">Last Month</span></div>' +
-          additional_items_html +
-          '</div>'
-        ).appendTo('body');
-
-        // additional ranges
-        opts.add_range.forEach(function(el, i) {
-          container.on('click.CalendarRangeSet', '.btn_date_range_' + i, function(e) {
-            unbindClickEventBlockTimerange();
-            let start = new Date(el['start'].getFullYear(), el['start'].getMonth(), el['start'].getDate());
-            let end = new Date(el['end'].getFullYear(), el['end'].getMonth(), el['end'].getDate());
-            fillInputs(start, end)
-          });
-        });
-
-        // Today
-        container.on('click.CalendarRangeSet', '.btn_today', function(e) {
-          unbindClickEventBlockTimerange();
-          let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate());
-          let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() + 1);
-          fillInputs(start, end);
-        });
-
-        // Yesterday
-        container.on('click.CalendarRangeSet', '.btn_yesterday', function(e) {
-          unbindClickEventBlockTimerange();
-          let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - 1);
-          let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate());
-          fillInputs(start, end);
-        });
-
-        // Week
-        container.on('click.CalendarRangeSet', '.btn_week', function(e) {
-          unbindClickEventBlockTimerange();
-          let start = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - days_since_monday(datetime));
-          let end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 7);
-          fillInputs(start, end);
-        });
-
-        // Month
-        container.on('click.CalendarRangeSet', '.btn_month', function(e) {
-          unbindClickEventBlockTimerange();
-          let start = new Date(datetime.getFullYear(), datetime.getMonth(), 1);
-          let end = new Date(datetime.getFullYear(), datetime.getMonth() + 1, 1);
-          fillInputs(start, end);
-        });
-
-        // Last Week
-        container.on('click.CalendarRangeSet', '.btn_last_week', function(e) {
-          unbindClickEventBlockTimerange();
-          let end = new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() - days_since_monday(datetime));
-          let start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 7);
-          fillInputs(start, end);
-        });
-
-        // Last Month
-        container.on('click.CalendarRangeSet', '.btn_last_month', function(e) {
-          unbindClickEventBlockTimerange();
-          let end = new Date(datetime.getFullYear(), datetime.getMonth(), 1);
-          let start = new Date(end.getFullYear(), end.getMonth() - 1, 1);
-          fillInputs(start, end);
-        });
-
-        // Outer
-        // No stopPropagation here: this listener only watches for a click
-        // that should close the popup. Active Admin delegates Clear Filters
-        // and the has_many buttons from <document>, which is upstream of
-        // <body>, so swallowing the event would break them for as long as
-        // the popup is open.
-        $('body').on('click.CalendarRangeSet', function(e) {
-          if ($(e.target).closest('.block_timerange').length == 0) {
-            unbindClickEventBlockTimerange();
-          }
-        });
-      });
-    });
-  }
-
-  $.fn.date_range_ext_preset.defaults = {
+  var defaults = {
     // Manual global time shift, from UTC can be +/- number
     hours_offset: 0,
 
@@ -224,22 +18,300 @@ $(function () {
     //     2015-06-10 00:00:00 - 2015-06-11 00:00:00
     date_to_human_readable: false,
 
-    // Display time or not: 2015-06-10 vs 2015-06-10 00:00:00
+    // Display time or not on text inputs: 2015-06-10 vs 2015-06-10 00:00:00
     show_time: false,
 
-    // Array of addition ranges
-    // example:
-    // {
-    //   title: 'Last 30 days',
-    //   start: new Date().setDate((new Date()).getDate() - 30)
-    //   end: new Date()
-    // }
+    // Array of additional ranges: { title: 'Last 30 days', start: Date, end: Date }
     add_range: []
-  }
-});
+  };
 
-// jQuery 3 removed $(document).on('ready'), so this must stay $(fn).
-$(function() {
-  // Init in forms
-  $('.datetime_preset_pair').date_range_ext_preset();
-});
+  var PRESETS = [
+    { key: 'today', title: 'Today', range: function (now) {
+      var start = day(now, 0);
+      return [start, day(start, 1)];
+    } },
+    { key: 'yesterday', title: 'Yesterday', range: function (now) {
+      return [day(now, -1), day(now, 0)];
+    } },
+    { key: 'week', title: 'This Week', range: function (now) {
+      var start = day(now, -daysSinceMonday(now));
+      return [start, day(start, 7)];
+    } },
+    { key: 'month', title: 'This Month', range: function (now) {
+      return [
+        new Date(now.getFullYear(), now.getMonth(), 1),
+        new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      ];
+    } },
+    { key: 'last_week', title: 'Last Week', range: function (now) {
+      var end = day(now, -daysSinceMonday(now));
+      return [day(end, -7), end];
+    } },
+    { key: 'last_month', title: 'Last Month', range: function (now) {
+      return [
+        new Date(now.getFullYear(), now.getMonth() - 1, 1),
+        new Date(now.getFullYear(), now.getMonth(), 1)
+      ];
+    } }
+  ];
+
+  function day(date, shift) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + shift);
+  }
+
+  // getDay() counts from Sunday, so a plain `- getDay() + 1` lands on
+  // tomorrow for Sundays and hands back the week that has not started yet.
+  function daysSinceMonday(date) {
+    return (date.getDay() + 6) % 7;
+  }
+
+  function pad(num) {
+    return (num < 10 ? '0' : '') + num;
+  }
+
+  // Native date inputs only accept ISO values, so the input's type picks the
+  // format; text inputs keep the format the plugin has always written.
+  function formatFor(input, date, opts) {
+    var ymd = date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+    var hm = pad(date.getHours()) + ':' + pad(date.getMinutes());
+    var hms = hm + ':' + pad(date.getSeconds());
+    if (input.type === 'date') { return ymd; }
+    if (input.type === 'datetime-local') { return ymd + 'T' + (allowsSeconds(input) ? hms : hm); }
+    return opts.show_time ? ymd + ' ' + hms : ymd;
+  }
+
+  // The default step of a datetime-local input is 60 seconds, and a value with
+  // seconds then fails validation and blocks the form submit.
+  function allowsSeconds(input) {
+    var step = input.getAttribute('step');
+    return step === 'any' || (step !== null && Number(step) % 60 !== 0);
+  }
+
+  // "Now" in UTC shifted by hours_offset, as a local Date whose fields hold
+  // those wall-clock values.
+  function shiftedNow(opts) {
+    var now = new Date();
+    var utc = new Date(
+      now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+      now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(),
+      now.getUTCMilliseconds()
+    );
+    return new Date(utc.getTime() + opts.hours_offset * 60 * 60 * 1000);
+  }
+
+  function setValue(input, value) {
+    input.value = value;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  // Also takes a jQuery object, which hosts migrating from the jQuery plugin
+  // still pass.
+  function resolveInput(option) {
+    if (!option) { return null; }
+    if (typeof option === 'string') { return document.querySelector(option); }
+    return option.jquery ? option[0] || null : option;
+  }
+
+  function fieldInputs(el) {
+    return el.querySelectorAll('input:not([type="hidden"]):not([type="submit"])');
+  }
+
+  // A wrapper holding both inputs (a date_range filter) uses its first and
+  // last. A Formtastic .datetime_preset_pair is two wrappers with one input
+  // each, so the "to" input lives in the next wrapper. Only that class looks
+  // there: any other element must not write into an unrelated next field.
+  function detectInputs(el, options) {
+    var inputs = fieldInputs(el);
+    var gteq = inputs[0];
+    var lteq = inputs[inputs.length - 1];
+    var next = el.nextElementSibling;
+    // A lone pair input with no partner gets only the start, not both ends.
+    if (inputs.length < 2 && el.classList.contains('datetime_preset_pair')) {
+      lteq = (next && fieldInputs(next)[0]) || null;
+    }
+    return [resolveInput(options.gteq_input) || gteq, resolveInput(options.lteq_input) || lteq];
+  }
+
+  var closeOpenMenu = function () {};
+
+  function menuItems(opts) {
+    var items = PRESETS.map(function (preset) {
+      return { key: preset.key, className: 'btn_' + preset.key, title: preset.title, range: preset.range };
+    });
+    opts.add_range.forEach(function (range, i) {
+      items.push({ key: 'custom_' + i, className: 'btn_date_range_' + i, title: range.title, range: function () {
+        return [day(range.start, 0), day(range.end, 0)];
+      } });
+    });
+    return items;
+  }
+
+  function openMenu(toggle, opts, fill) {
+    closeOpenMenu();
+
+    var items = menuItems(opts);
+    var menu = document.createElement('div');
+    menu.className = 'block_timerange';
+    menu.setAttribute('data-date-range-preset-menu', '');
+    menu.setAttribute('role', 'menu');
+
+    items.forEach(function (item) {
+      var row = document.createElement('div');
+      var button = document.createElement('span');
+      button.className = item.className;
+      button.setAttribute('data-date-range-preset', item.key);
+      button.setAttribute('role', 'menuitem');
+      button.tabIndex = 0;
+      button.textContent = item.title;
+      row.appendChild(button);
+      menu.appendChild(row);
+    });
+
+    var box = toggle.getBoundingClientRect();
+    menu.style.minWidth = box.width + 'px';
+    menu.style.top = (box.top + window.scrollY) + 'px';
+    menu.style.left = (box.left + window.scrollX) + 'px';
+
+    function choose(target) {
+      var button = target.closest('[data-date-range-preset]');
+      if (!button) { return; }
+      var key = button.getAttribute('data-date-range-preset');
+      var item = items.filter(function (it) { return it.key === key; })[0];
+      closeOpenMenu();
+      fill(item.range(shiftedNow(opts)));
+    }
+
+    menu.addEventListener('click', function (e) { choose(e.target); });
+    menu.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        choose(e.target);
+        toggle.focus();
+      } else if (e.key === 'Escape') {
+        closeOpenMenu();
+        toggle.focus();
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        var buttons = Array.prototype.slice.call(menu.querySelectorAll('[data-date-range-preset]'));
+        var step = e.key === 'ArrowDown' ? 1 : -1;
+        var at = buttons.indexOf(document.activeElement);
+        // With no preset focused, ArrowUp starts from the bottom.
+        if (at === -1) { at = step === 1 ? -1 : 0; }
+        buttons[(at + step + buttons.length) % buttons.length].focus();
+      }
+    });
+
+    // Tabbing out of the menu closes it. A null relatedTarget is a click on
+    // something unfocusable, which onOutsideClick already handles.
+    menu.addEventListener('focusout', function (e) {
+      if (e.relatedTarget && !menu.contains(e.relatedTarget)) { closeOpenMenu(); }
+    });
+
+    // No stopPropagation: this listener only watches for a click that should
+    // close the menu. Active Admin delegates Clear Filters and the has_many
+    // buttons from <document>, so swallowing the event would break them.
+    function onOutsideClick(e) {
+      if (!menu.contains(e.target)) { closeOpenMenu(); }
+    }
+
+    closeOpenMenu = function () {
+      menu.remove();
+      document.body.removeEventListener('click', onOutsideClick);
+      toggle.setAttribute('aria-expanded', 'false');
+      closeOpenMenu = function () {};
+    };
+
+    // Append and bind in the same tick, so the presets are live as soon as
+    // the menu is in the document.
+    document.body.appendChild(menu);
+    document.body.addEventListener('click', onOutsideClick);
+
+    // A link at the right edge of a sidebar would push the menu off screen.
+    var overflow = menu.getBoundingClientRect().right - document.documentElement.clientWidth;
+    if (overflow > 0) { menu.style.left = Math.max(0, box.left + window.scrollX - overflow) + 'px'; }
+    toggle.setAttribute('aria-expanded', 'true');
+
+    // The menu sits at the end of <body>, out of the tab order near the link.
+    var first = menu.querySelector('[data-date-range-preset]');
+    if (first) { first.focus(); }
+  }
+
+  // Read at click time: on Active Admin 4 the module, and so the auto-init,
+  // runs before a host module that imports it can set defaults.
+  function currentOptions(el, options) {
+    // api.defaults, so a host that replaces the whole object is still heard.
+    var opts = Object.assign({}, api.defaults, options);
+    opts.add_range = opts.add_range || [];
+
+    // The attribute is authoritative in both directions when present.
+    var showTime = el.getAttribute('data-show-time');
+    if (showTime !== null) { opts.show_time = showTime === 'true'; }
+    return opts;
+  }
+
+  function initElement(el, options) {
+    // Re-initialising replaces the wiring instead of adding to it, so a host
+    // call with options after the auto-init wins. The listener lives on the
+    // link, so dropping the old link drops the old wiring with it.
+    el.querySelectorAll('[data-date-range-preset-toggle]').forEach(function (link) { link.remove(); });
+
+    var inputs = detectInputs(el, options);
+    var gteq = inputs[0];
+    var lteq = inputs[1];
+
+    var toggle = document.createElement('a');
+    toggle.href = '#';
+    toggle.className = 'btn_timerange';
+    toggle.textContent = 'Set range';
+    toggle.setAttribute('data-date-range-preset-toggle', '');
+    toggle.setAttribute('aria-haspopup', 'menu');
+    toggle.setAttribute('aria-expanded', 'false');
+
+    var label = el.querySelector('label');
+    if (label) {
+      label.classList.add('datetime_preset_filter_label');
+      label.appendChild(toggle);
+    } else {
+      el.insertBefore(toggle, el.firstChild);
+    }
+
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var opts = currentOptions(el, options);
+      openMenu(toggle, opts, function (range) {
+        var end = range[1];
+        if (opts.date_to_human_readable) { end = new Date(end.getTime() - 1000); }
+        if (gteq) { setValue(gteq, formatFor(gteq, range[0], opts)); }
+        if (lteq) { setValue(lteq, formatFor(lteq, end, opts)); }
+      });
+    });
+  }
+
+  function toElements(target) {
+    if (typeof target === 'string') { return Array.prototype.slice.call(document.querySelectorAll(target)); }
+    if (target instanceof Element) { return [target]; }
+    return Array.prototype.slice.call(target || []);
+  }
+
+  // target: a CSS selector, an Element, or a list of Elements.
+  function init(target, options) {
+    var elements = toElements(target);
+    elements.forEach(function (el) { initElement(el, options || {}); });
+    return elements;
+  }
+
+  var api = { defaults: defaults, init: init };
+  window.ActiveAdminDateRangePreset = api;
+
+  function autoInit() {
+    init('.datetime_preset_pair');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', autoInit);
+  } else {
+    autoInit();
+  }
+})();
