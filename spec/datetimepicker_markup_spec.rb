@@ -42,6 +42,24 @@ describe 'active_admin_datetimepicker range filters', type: :feature, js: true d
     expect(range('dtp_datetime')).to eq(['2026-09-30T00:00', '2026-10-01T00:00'])
   end
 
+  # The plugin's _lteq_datetime_picker predicate is a strict `<`, so the range
+  # ends at the first instant after the day; 23:59 would drop its last minute.
+  it 'ends a human-readable datetime range at the start of the next day' do
+    inject_filter('dtp_exclusive', 'datetime-local', 'published_at')
+    page.execute_script("ActiveAdminDateRangePreset.init('#dtp_exclusive', { date_to_human_readable: true });")
+    pick_today('dtp_exclusive')
+
+    expect(range('dtp_exclusive')).to eq(['2026-09-30T00:00', '2026-10-01T00:00'])
+  end
+
+  it 'keeps the end of a human-readable date range on the same day' do
+    inject_filter('dtp_inclusive', 'date', 'published_on')
+    page.execute_script("ActiveAdminDateRangePreset.init('#dtp_inclusive', { date_to_human_readable: true });")
+    pick_today('dtp_inclusive')
+
+    expect(range('dtp_inclusive')).to eq(['2026-09-30', '2026-09-30'])
+  end
+
   it 'fills date inputs of a date column with YYYY-MM-DD' do
     inject_filter('dtp_date', 'date', 'published_on')
     pick_today('dtp_date')

@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `active_admin_date_range_preset/page_objects`: `choose_preset` and `range` for the
+  date range filter of active_admin_page_objects 2.x.
+
+### Fixed
+
+- With `date_to_human_readable`, an end input named `*_lteq_datetime_picker`
+  (active_admin_datetimepicker's strict `<` predicate) now gets the start of the next
+  day. It used to get 23:59, which dropped the last minute of the range.
+
 ## 1.0.0 (2026-11-27)
 
 ### Breaking
