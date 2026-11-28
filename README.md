@@ -316,7 +316,13 @@ ActiveAdminDateRangePreset.init('form.filter_form div.filter_date_range', {
 
 ## Page objects
 
-Page objects for tests, built on [active_admin_page_objects](https://github.com/activeadmin-plugins/active_admin_page_objects) 2.x. They are optional and need Active Admin 4. Add that gem to your test group and require the file from your spec helper:
+Page objects for tests, built on [active_admin_page_objects](https://github.com/activeadmin-plugins/active_admin_page_objects) 2.x. They are optional and need Active Admin 4. 2.x is not on RubyGems yet, so add it to your test group from GitHub:
+
+```ruby
+gem 'active_admin_page_objects', github: 'activeadmin-plugins/active_admin_page_objects', branch: 'restructure-vanilla-v4'
+```
+
+Then require the file from your spec helper:
 
 ```ruby
 require 'active_admin_date_range_preset/page_objects'
